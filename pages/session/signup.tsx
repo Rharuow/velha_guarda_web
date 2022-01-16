@@ -4,49 +4,103 @@ import ReactLoading from "react-loading";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
 
-import { getGuild } from "../../services/charApi";
+import { getChar, getGuild } from "../../services/charApi";
 import { Guild } from "../../types/Guild";
-import { Char, CharRegistration } from "../../types/database/Char";
+import { CharDatabase, CharRegistration } from "../../types/database/Char";
 
 import _ from "lodash";
 import Link from "next/link";
-import { getChars } from "../../services/api";
+import { createUser, getChars } from "../../services/api";
+import { translate } from "../../translate";
+import { serializeChar } from "../../util/serializerChar";
+import { CreateUser } from "../../types/database/User";
+
+export type FormSignupUser = {
+  email: string;
+  char: string;
+  token: string;
+  password: string;
+  password_confirmation: string;
+};
 
 const Signup: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [chars, setChars] = useState<Array<CharRegistration | null>>([]);
   const [guild, setGuild] = useState<Guild>();
-  const { register, handleSubmit, control } = useForm();
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<FormSignupUser>();
   const [options, setOptions] =
     useState<Array<{ value: string; label: string }>>();
 
   useEffect(() => {
     const recoverGuildData = async () => {
       const guildData = await getGuild();
-      const charsRegistred = (await getChars()).record as Array<Char>;
-      const charsNameRegistred = charsRegistred.map((char) => char.name);
-      setGuild(guildData);
-      let members: Array<CharRegistration> = [];
-      let getOptions: Array<{ value: string; label: string }> = [];
-      guildData.guild.members.forEach((member) => {
-        const getMembers = member.characters.map((char) => {
-          if (charsNameRegistred.filter((c) => c === char.name).length < 1)
-            getOptions.push({ value: char.name, label: char.name });
-          return {
-            name: char.name,
-            admin:
-              member.rank_title === "Representante" ||
-              char.name.includes("Rharuow"),
-          };
+      if (guildData) {
+        const charsRegistred = (await getChars()).record as Array<CharDatabase>;
+        const charsNameRegistred = charsRegistred.map((char) => char.name);
+        setGuild(guildData);
+        let members: Array<CharRegistration> = [];
+        let getOptions: Array<{ value: string; label: string }> = [];
+        guildData?.guild?.members?.forEach((member) => {
+          const getMembers = member.characters.map((char) => {
+            if (charsNameRegistred.filter((c) => c === char.name).length < 1)
+              getOptions.push({ value: char.name, label: char.name });
+            return {
+              name: char.name,
+              admin:
+                member.rank_title === "Representante" ||
+                char.name.includes("Rharuow"),
+            };
+          });
+          members = _.concat(members, getMembers);
         });
-        members = _.concat(members, getMembers);
-      });
-      setOptions(_.orderBy(getOptions, ["value"]));
-      setChars(members);
-      setLoading(false);
+        setOptions(_.orderBy(getOptions, ["value"]));
+        setChars(members);
+        setLoading(false);
+      }
     };
     recoverGuildData();
   }, []);
+
+  const charWatch = watch("char");
+
+  const onSubmit = async (data: FormSignupUser) => {
+    console.log(data);
+    setLoading(true);
+    let charsApi = await getChar(data.char);
+    const isAdmin = charsApi.data.guild.rank === "Representante";
+    const charsParams: Array<CharDatabase> = [];
+    charsParams.push(serializeChar(charsApi));
+    for (const char of charsApi.other_characters) {
+      if (char.world.includes("Pacera")) {
+        charsApi = await getChar(char.name);
+        charsParams.push(serializeChar(charsApi));
+      }
+    }
+    const dataFormatted: CreateUser = {
+      chars: charsParams,
+      email: data.email,
+      is_active: false,
+      name: data.char.split(" ")[0],
+      password: data.password,
+      is_admin: isAdmin,
+    };
+    // const res = await createUser({
+    //   chars: charsParams,
+    //   email: data.email,
+    //   is_active: false,
+    //   name: data.char.split(" ")[0],
+    //   password: data.password,
+    //   is_admin
+    // });
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-100vh d-flex justify-content-center align-items-center">
@@ -56,17 +110,19 @@ const Signup: React.FC = () => {
         <Card bg="secondary">
           <Card.Header>Cadastro</Card.Header>
           <Card.Body>
-            <Form>
+            <Form onSubmit={handleSubmit(onSubmit)}>
               <Form.Group className="my-3">
                 <Form.Label>Email</Form.Label>
                 <Form.Control
                   placeholder="Digite seu email"
+                  required
                   {...register("email")}
                 />
               </Form.Group>
               <Form.Group className="my-3">
                 <Form.Label>Char</Form.Label>
                 <Controller
+                  name="char"
                   render={() => (
                     <Select
                       options={options}
@@ -76,16 +132,21 @@ const Signup: React.FC = () => {
                           color: "black",
                         }),
                       }}
-                      name="char"
+                      onChange={(e) => e && setValue("char", e?.value)}
                     />
                   )}
-                  name="char"
                   control={control}
                 />
+                {errors.char && (
+                  <span className="text-danger">
+                    {translate()["Choose one"]} char
+                  </span>
+                )}
               </Form.Group>
               <Form.Group className="my-3">
                 <Form.Label>Token</Form.Label>
                 <Form.Control
+                  required
                   placeholder="Token de acesso"
                   {...register("token")}
                 />
@@ -93,6 +154,7 @@ const Signup: React.FC = () => {
               <Form.Group className="my-3">
                 <Form.Label>Senha</Form.Label>
                 <Form.Control
+                  required
                   placeholder="Senha"
                   type="password"
                   {...register("password")}
@@ -101,13 +163,16 @@ const Signup: React.FC = () => {
               <Form.Group className="my-3">
                 <Form.Label>Confirmação da senha</Form.Label>
                 <Form.Control
+                  required
                   placeholder="Confirmação da Senha"
                   type="password"
                   {...register("password_confirmation")}
                 />
               </Form.Group>
               <div className="d-flex justify-content-around">
-                <Button type="submit">Salvar</Button>
+                <Button disabled={charWatch === undefined} type="submit">
+                  Salvar
+                </Button>
                 <Link href="/">
                   <a className="btn btn-danger">Voltar</a>
                 </Link>

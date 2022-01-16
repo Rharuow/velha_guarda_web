@@ -1,4 +1,5 @@
 import axios from "axios";
+import { CreateUser } from "../types/database/User";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -9,4 +10,6 @@ const api = axios.create({
 
 const getChars = async () => (await api.get("/chars")).data;
 
-export { api, getChars };
+const createUser = async (body: CreateUser) => await api.post("/users", body);
+
+export { api, getChars, createUser };

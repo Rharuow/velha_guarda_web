@@ -5,7 +5,7 @@ export type CharRegistration = {
   admin: boolean;
 };
 
-export type Char = {
+export type CharDatabase = {
   name: string;
   lvl: number;
   max_shared_lvl: number;
@@ -15,6 +15,6 @@ export type Char = {
   residence: string;
   sex: "m" | "f";
   voc: "ms" | "ek" | "ed" | "rp";
-  user_id: string;
-  user: User;
+  user_id?: string;
+  user?: User;
 };
