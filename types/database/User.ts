@@ -15,6 +15,5 @@ export type CreateUser = {
   is_active: boolean;
   password: string;
   secret: string;
-  token: string;
   chars: Array<CharDatabase>;
 };

@@ -14,12 +14,14 @@ import { createUser, getChars } from "../../services/api";
 import { translate } from "../../translate";
 import { serializeChar } from "../../util/serializerChar";
 import { CreateUser } from "../../types/database/User";
+import { secretHashed } from "../../util/hashSecret";
 
 export type FormSignupUser = {
   email: string;
   char: string;
-  token: string;
   password: string;
+  secret: string;
+  user_kind: string | null;
   password_confirmation: string;
 };
 
@@ -74,31 +76,31 @@ const Signup: React.FC = () => {
     console.log(data);
     setLoading(true);
     let charsApi = await getChar(data.char);
-    const isAdmin = charsApi.data.guild.rank === "Representante";
-    const charsParams: Array<CharDatabase> = [];
-    charsParams.push(serializeChar(charsApi));
-    for (const char of charsApi.other_characters) {
-      if (char.world.includes("Pacera")) {
-        charsApi = await getChar(char.name);
-        charsParams.push(serializeChar(charsApi));
+    const isPermitted = secretHashed(data.secret, charsApi.data.guild.rank);
+    if (isPermitted) {
+      const isAdmin = charsApi.data.guild.rank === "Representante";
+      const charsParams: Array<CharDatabase> = [];
+      charsParams.push(serializeChar(charsApi));
+      for (const char of charsApi.other_characters) {
+        if (char.world.includes("Pacera")) {
+          charsApi = await getChar(char.name);
+          charsParams.push(serializeChar(charsApi));
+        }
       }
+      // const dataFormatted: CreateUser = {
+      //   chars: charsParams,
+      //   email: data.email,
+      //   is_active: false,
+      //   name: data.char.split(" ")[0],
+      //   password: data.password,
+      //   is_admin: isAdmin,
+      //   secret: `${process.env.NEXT_PUBLIC_SECRET}`,
+      // };
+
+      // console.log("dataFormatted = ", dataFormatted);
+
+      // const res = await createUser(dataFormatted);
     }
-    const dataFormatted: CreateUser = {
-      chars: charsParams,
-      email: data.email,
-      is_active: false,
-      name: data.char.split(" ")[0],
-      password: data.password,
-      is_admin: isAdmin,
-    };
-    // const res = await createUser({
-    //   chars: charsParams,
-    //   email: data.email,
-    //   is_active: false,
-    //   name: data.char.split(" ")[0],
-    //   password: data.password,
-    //   is_admin
-    // });
     setLoading(false);
   };
 
@@ -111,6 +113,7 @@ const Signup: React.FC = () => {
           <Card.Header>Cadastro</Card.Header>
           <Card.Body>
             <Form onSubmit={handleSubmit(onSubmit)}>
+              <input type="text" hidden {...register("user_kind")} />
               <Form.Group className="my-3">
                 <Form.Label>Email</Form.Label>
                 <Form.Control
@@ -132,7 +135,9 @@ const Signup: React.FC = () => {
                           color: "black",
                         }),
                       }}
-                      onChange={(e) => e && setValue("char", e?.value)}
+                      onChange={(e) => {
+                        e && setValue("char", e?.value);
+                      }}
                     />
                   )}
                   control={control}
@@ -144,11 +149,11 @@ const Signup: React.FC = () => {
                 )}
               </Form.Group>
               <Form.Group className="my-3">
-                <Form.Label>Token</Form.Label>
+                <Form.Label>Palavra secreta</Form.Label>
                 <Form.Control
                   required
-                  placeholder="Token de acesso"
-                  {...register("token")}
+                  placeholder="Segredo de acesso"
+                  {...register("secret")}
                 />
               </Form.Group>
               <Form.Group className="my-3">
