@@ -2,7 +2,7 @@
   "name": "web",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3005",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -20,7 +20,8 @@
     "react-dom": "17.0.2",
     "react-hook-form": "^7.24.0",
     "react-loading": "^2.0.3",
-    "react-select": "^5.2.2"
+    "react-select": "^5.2.2",
+    "sweetalert2": "^11.3.10"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.178",

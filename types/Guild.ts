@@ -25,6 +25,7 @@ export type Guild = {
     };
     members: Array<Member>;
     invited: Array<any>;
+    error: string
   };
 };
 

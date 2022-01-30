@@ -1,0 +1,9 @@
+@for $i from 1 through 1000 {
+    .min-w-#{$i}px {
+      min-width: #{$i}px;
+    }
+  
+    .w-#{$i}px {
+      width: #{$i}px;
+    }
+  }

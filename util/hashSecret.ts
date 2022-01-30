@@ -1,4 +1,4 @@
-export const secretHashed: (secrete: string, kind: string) => boolean = (
+export const getPermission: (secrete: string, kind: string) => boolean = (
   secret,
   kind
 ) => {
