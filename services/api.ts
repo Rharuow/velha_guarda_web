@@ -12,4 +12,7 @@ const getChars = async () => (await api.get("/chars")).data;
 
 const createUser = async (body: CreateUser) => await api.post("/users", body);
 
-export { api, getChars, createUser };
+const confirmationUser = async (token: string, email: string) =>
+  await api.get(`/users/confirmation/${email}/${token}`);
+
+export { api, getChars, createUser, confirmationUser };
