@@ -3,7 +3,7 @@ import { Button, Card, Form } from "react-bootstrap";
 import ReactLoading from "react-loading";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 import { getChar, getGuild } from "../../services/charApi";
 import { Guild } from "../../types/Guild";
@@ -41,37 +41,36 @@ const Signup: React.FC = () => {
   } = useForm<FormSignupUser>();
   const [options, setOptions] =
     useState<Array<{ value: string; label: string }>>();
-  
-  const router = useRouter()
+
+  const router = useRouter();
 
   useEffect(() => {
     const recoverGuildData = async () => {
-        const guildData = await getGuild();
-        if (guildData) {
-          const charsRegistred = (await getChars()).record as Array<CharDatabase>;
-          const charsNameRegistred = charsRegistred.map((char) => char.name);
-          setGuild(guildData);
-          let members: Array<CharRegistration> = [];
-          let getOptions: Array<{ value: string; label: string }> = [];
-          guildData?.guild?.members?.forEach((member) => {
-            const getMembers = member.characters.map((char) => {
-              if (charsNameRegistred.filter((c) => c === char.name).length < 1)
-                getOptions.push({ value: char.name, label: char.name });
-              return {
-                name: char.name,
-                admin:
-                  member.rank_title === "Representante" ||
-                  char.name.includes("Rharuow"),
-              };
-            });
-            members = _.concat(members, getMembers);
+      const guildData = await getGuild();
+      if (guildData) {
+        const charsRegistred = (await getChars()).record as Array<CharDatabase>;
+        const charsNameRegistred = charsRegistred.map((char) => char.name);
+        setGuild(guildData);
+        let members: Array<CharRegistration> = [];
+        let getOptions: Array<{ value: string; label: string }> = [];
+        guildData?.guild?.members?.forEach((member) => {
+          const getMembers = member.characters.map((char) => {
+            if (charsNameRegistred.filter((c) => c === char.name).length < 1)
+              getOptions.push({ value: char.name, label: char.name });
+            return {
+              name: char.name,
+              admin:
+                member.rank_title === "Representante" ||
+                char.name.includes("Rharuow"),
+            };
           });
-          setOptions(_.orderBy(getOptions, ["value"]));
-          setChars(members);
-          setLoading(false);
-        }
-      console.log("guildData = ", guildData)
-      if(guildData.guild.error) recoverGuildData()
+          members = _.concat(members, getMembers);
+        });
+        setOptions(_.orderBy(getOptions, ["value"]));
+        setChars(members);
+        setLoading(false);
+      }
+      if (guildData.guild.error) recoverGuildData();
     };
     recoverGuildData();
   }, []);
@@ -80,53 +79,54 @@ const Signup: React.FC = () => {
 
   const onSubmit = async (data: FormSignupUser) => {
     setLoading(true);
-      let charsApi = await getChar(data.char);
-      console.log("charsApi = ", charsApi)
-      const isPermitted = getPermission(data.secret, charsApi?.data.name.includes("Rharuow") ? 'Representante' : charsApi?.data.guild.rank);
-      if (isPermitted) {
-        const isAdmin = charsApi?.data.guild.rank === "Representante";
-        const charsParams: Array<CharDatabase> = [];
-        charsParams.push(serializeChar(charsApi));
-        for (const char of charsApi?.other_characters) {
-          console.log("charApi = ", charsApi.data.name)
-          if (char.world.includes("Pacera") && data.char !== char.name) {
-            charsApi = await getChar(char.name);
-            charsParams.push(serializeChar(charsApi));
-          }
+    let charsApi = await getChar(data.char);
+    const isPermitted = getPermission(
+      data.secret,
+      charsApi?.data.name.includes("Rharuow")
+        ? "Representante"
+        : charsApi?.data.guild.rank
+    );
+    if (isPermitted) {
+      const isAdmin = charsApi?.data.guild.rank === "Representante";
+      const charsParams: Array<CharDatabase> = [];
+      charsParams.push(serializeChar(charsApi));
+      for (const char of charsApi?.other_characters) {
+        if (char.world.includes("Pacera") && data.char !== char.name) {
+          charsApi = await getChar(char.name);
+          charsParams.push(serializeChar(charsApi));
         }
-
-        Swal.fire({
-          title: translate()['Greate!'],
-          text: translate()["Registrations was successfully"],
-          icon: 'success',
-          confirmButtonText: 'Confimar'
-        })
-
-        router.push(`/session/confirmation?email=${data.email}`)
-
-        const dataFormatted: CreateUser = {
-          chars: charsParams,
-          email: data.email,
-          is_active: false,
-          name: data.char.split(" ")[0],
-          password: data.password,
-          is_admin: isAdmin,
-          secret: `${process.env.NEXT_PUBLIC_SECRET}`,
-        };
-  
-        console.log("dataFormatted = ", dataFormatted);
-  
-        const res = await createUser(dataFormatted);
-
-        setLoading(false);
-      } else {
-        Swal.fire({
-          title: translate()['ops!'],
-          text: translate()["U did make something wrong"],
-          icon: 'error',
-          confirmButtonText: 'Ok'
-        })
       }
+
+      Swal.fire({
+        title: translate()["Greate!"],
+        text: translate()["Registrations was successfully"],
+        icon: "success",
+        confirmButtonText: "Confimar",
+      });
+
+      router.push(`/session/confirmation?email=${data.email}`);
+
+      const dataFormatted: CreateUser = {
+        chars: charsParams,
+        email: data.email,
+        is_active: false,
+        name: data.char.split(" ")[0],
+        password: data.password,
+        is_admin: isAdmin,
+        secret: `${process.env.NEXT_PUBLIC_SECRET}`,
+      };
+
+      const res = await createUser(dataFormatted);
+
+      setLoading(false);
+    } else {
+      Swal.fire({
+        title: translate()["ops!"],
+        text: translate()["U did make something wrong"],
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    }
     setLoading(false);
   };
 
@@ -156,7 +156,7 @@ const Signup: React.FC = () => {
                     <Select
                       options={options}
                       placeholder="Nome do Char"
-                        styles={{
+                      styles={{
                         menu: () => ({
                           color: "black",
                         }),

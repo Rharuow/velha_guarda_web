@@ -15,4 +15,7 @@ const createUser = async (body: CreateUser) => await api.post("/users", body);
 const confirmationUser = async (token: string, email: string) =>
   await api.get(`/users/confirmation/${email}/${token}`);
 
-export { api, getChars, createUser, confirmationUser };
+const createSession = async (email: string, password: string) =>
+  await api.post("/session", { email, password });
+
+export { api, getChars, createUser, confirmationUser, createSession };

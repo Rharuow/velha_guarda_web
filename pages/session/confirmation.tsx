@@ -15,7 +15,6 @@ const Confirmation: React.FC = () => {
   useEffect(() => {
     const handleConfirmation = async (token: string, email: string) => {
       const res = await confirmationUser(token, email);
-      console.log("res = ", res);
       setLoading(false);
     };
     if (email && token) handleConfirmation(token, email);
