@@ -18,6 +18,7 @@ const Confirmation: React.FC = () => {
       setLoading(false);
     };
     if (email && token) handleConfirmation(token, email);
+    setLoading(false);
   }, [email, token]);
 
   return (
