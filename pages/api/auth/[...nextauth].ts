@@ -41,7 +41,6 @@ export default NextAuth({
 
           return { token };
         }
-        console.log("Missing params");
         return Promise.reject(new Error("Missing params"));
       },
     }),

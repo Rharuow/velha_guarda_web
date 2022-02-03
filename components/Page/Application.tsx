@@ -16,8 +16,6 @@ const Application: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
-  console.log(router.pathname);
-
   useEffect(() => {
     const getCurrentUser = async () => {
       const tempUser = (await getCurrentUserByToken(`${session?.data?.token}`))
