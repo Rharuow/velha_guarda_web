@@ -1,17 +1,16 @@
 import NextAuth from "next-auth";
+
 import CredentialsProvider from "next-auth/providers/credentials";
 import { createSession } from "../../../services/api";
 
 export default NextAuth({
-  secret: "fVVsnHx/uMy5WsagSDfAeZtroZhPfPWVyeMcqMLc4eI=",
+  secret: process.env.NEXT_PUBLIC_JWT_SECRET,
   callbacks: {
     async session({ session, user, token }) {
-      console.log("session (user) = ", user);
-      return session;
+      return Promise.resolve({ ...session, user, ...token });
     },
     async jwt({ token, user, account, profile, isNewUser }) {
-      console.log("jwt (user) = ", user);
-      return token;
+      return Promise.resolve(user || token);
     },
   },
   pages: {
@@ -38,14 +37,9 @@ export default NextAuth({
           const email = credentials.email;
           const password = credentials.password;
 
-          const res = (await createSession(email, password)).data;
+          const token = (await createSession(email, password)).data.token;
 
-          const user = { token: res.token };
-
-          console.log("res = ", res.token);
-
-          // if (res) return Promise.resolve(res.data);
-          if (res) return user;
+          return { token };
         }
         console.log("Missing params");
         return Promise.reject(new Error("Missing params"));

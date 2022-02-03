@@ -2,8 +2,7 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import { Button, Card, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { getCsrfToken, signIn } from "next-auth/react";
-import { CtxOrReq } from "next-auth/client/_utils";
+import { signIn } from "next-auth/react";
 
 import { LoginUser } from "../../types/database/User";
 
@@ -13,12 +12,10 @@ export type FormLoginUser = {
   csrfToken: string;
 };
 
-const Login: React.FC<{ csrfToken: string }> = ({ csrfToken }) => {
+const Login: React.FC = () => {
   const { register, handleSubmit, setValue } = useForm<FormLoginUser>();
 
   const onSubmit = async (data: LoginUser) => {
-    console.log("data = ", data);
-
     signIn("login", {
       ...data,
       callbackUrl: `${process.env.NEXT_PUBLIC_SITE}/home`,
@@ -37,11 +34,6 @@ const Login: React.FC<{ csrfToken: string }> = ({ csrfToken }) => {
       <Card className="align-self-start">
         <Card.Body>
           <Form onSubmit={handleSubmit(onSubmit)}>
-            <input
-              type="hidden"
-              {...register("csrfToken")}
-              defaultValue={csrfToken}
-            />
             <Form.Group className="my-3">
               <Form.Label className="text-dark">Email</Form.Label>
               <Form.Control
@@ -76,13 +68,5 @@ const Login: React.FC<{ csrfToken: string }> = ({ csrfToken }) => {
     </div>
   );
 };
-
-export async function getServerSideProps(context: CtxOrReq | undefined) {
-  return {
-    props: {
-      csrfToken: await getCsrfToken(context),
-    },
-  };
-}
 
 export default Login;

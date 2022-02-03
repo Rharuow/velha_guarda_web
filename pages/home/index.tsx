@@ -1,10 +1,18 @@
-import { useSession } from "next-auth/react";
-import React from "react";
+import { useSession, getSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 
 const Home: React.FC = () => {
-  const session = useSession();
+  const router = useRouter();
 
-  console.log(session);
+  useEffect(() => {
+    const recoverySession = async () => {
+      const session = await getSession();
+      console.log(session);
+    };
+
+    recoverySession();
+  }, []);
 
   return <div>HOME</div>;
 };
