@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { CreateUser } from "../types/database/User";
 
 const api = axios.create({
@@ -18,4 +18,16 @@ const confirmationUser = async (token: string, email: string) =>
 const createSession = async (email: string, password: string) =>
   await api.post("/session", { email, password });
 
-export { api, getChars, createUser, confirmationUser, createSession };
+const getCurrentUserByToken: (
+  token: string
+) => Promise<AxiosResponse<any, any>> = async (token) =>
+  await api.get("/session", { headers: { authorization: `Bearer ${token}` } });
+
+export {
+  api,
+  getChars,
+  createUser,
+  confirmationUser,
+  createSession,
+  getCurrentUserByToken,
+};

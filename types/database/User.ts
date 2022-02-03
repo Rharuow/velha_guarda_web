@@ -3,7 +3,7 @@ import { CharDatabase } from "./Char";
 export interface LoginUser {
   email: string;
   password: string;
-  csrfToken: string;
+  csrfToken?: string;
 }
 
 export interface CreateUser extends LoginUser {
@@ -15,6 +15,7 @@ export interface CreateUser extends LoginUser {
 }
 
 export type User = {
+  id?: string;
   name: string;
   email: string;
   is_admin: boolean;

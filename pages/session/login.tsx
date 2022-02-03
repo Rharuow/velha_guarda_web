@@ -18,7 +18,7 @@ const Login: React.FC = () => {
   const onSubmit = async (data: LoginUser) => {
     signIn("login", {
       ...data,
-      callbackUrl: `${process.env.NEXT_PUBLIC_SITE}/home`,
+      callbackUrl: `${process.env.NEXT_PUBLIC_SITE}/dashboard`,
     });
   };
 
