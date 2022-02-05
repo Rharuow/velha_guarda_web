@@ -7,9 +7,9 @@ const Header: React.FC = () => {
   const currentUser = useCurrentUserContext();
 
   return (
-    <Card className="text-dark min-w-30">
+    <Card className="text-dark text-center w-100 border-radius-bottom-left-20px border-radius-bottom-right-20px">
       <Card.Body className="d-flex justify-content-between">
-        <span>{currentUser?.name}</span>
+        <span className="flex-grow-1">{currentUser?.name}</span>
         <Button
           variant="danger"
           size="sm"
