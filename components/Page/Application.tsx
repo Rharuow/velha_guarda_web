@@ -2,7 +2,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import ReactLoading from "react-loading";
-import Login from "../../pages/session/login";
 import { getCurrentUserByToken } from "../../services/api";
 import { User } from "../../types/database/User";
 
