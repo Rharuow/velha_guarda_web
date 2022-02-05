@@ -5,6 +5,8 @@
 @import "@fortawesome/fontawesome-free/scss/solid";
 @import "@fortawesome/fontawesome-free/scss/brands";
 
+@import "./atomic/bg";
+@import "./atomic/border";
 @import "./atomic/height";
 @import "./atomic/width";
 @import "./global/reset";
