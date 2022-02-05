@@ -28,7 +28,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-100vh d-flex align-items-center justify-content-center flex-wrap">
-      <h1 className="d-block w-100 text-center align-self-end">
+      <h1 className="d-block w-100 text-center text-white align-self-end">
         {process.env.NEXT_PUBLIC_APP_NAME}
       </h1>
       <Card className="align-self-start">
