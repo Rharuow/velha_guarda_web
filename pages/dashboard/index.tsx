@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import ReactLoading from "react-loading";
+import Slider from "react-slick";
+
 import CharDetailed from "../../components/Cards/CharDetailed";
+import Char from "../../components/Cards/Char";
 import Header from "../../components/domain/Header";
 import { useCurrentUserContext } from "../../components/Page/Application";
 import { CharDatabase } from "../../types/database/Char";
@@ -11,7 +14,12 @@ const Home: React.FC = () => {
   const [chars, setChars] = useState<Array<CharDatabase>>();
   const [char, setChar] = useState<CharDatabase>();
 
-  console.log(currentUser);
+  const settings = {
+    dots: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
 
   useEffect(() => {
     if (currentUser && currentUser !== null && currentUser.chars) {
@@ -30,6 +38,15 @@ const Home: React.FC = () => {
           </div>
           <div className="mb-4">
             <CharDetailed {...char} />
+          </div>
+          <div className="mb-4">
+            <Slider {...settings}>
+              {chars?.map((char) => (
+                <div key={char.name}>
+                  <Char {...char} />
+                </div>
+              ))}
+            </Slider>
           </div>
         </>
       ) : (
