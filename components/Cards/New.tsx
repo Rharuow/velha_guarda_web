@@ -4,11 +4,12 @@ import { Card } from "react-bootstrap";
 export type PropsNew = {
   variant?: "success" | "primary" | "danger" | "warning";
   title?: string;
+  onClick?: () => void;
 };
 
-const New: React.FC<PropsNew> = ({ variant = "success", title }) => {
+const New: React.FC<PropsNew> = ({ variant = "success", title, onClick }) => {
   return (
-    <Card className="p-2">
+    <Card className="p-2" onClick={() => (onClick ? onClick() : {})}>
       <Card.Body
         className={`d-flex justify-content-center border-${variant} border-dashed`}
       >
