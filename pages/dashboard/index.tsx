@@ -10,8 +10,9 @@ import { CharDatabase } from "../../types/database/Char";
 import Event from "../../components/Cards/Event";
 import New from "../../components/Cards/New";
 import { EventDatabase } from "../../types/database/Event";
-import { getCharEvents } from "../../services/api";
+import { getEvents } from "../../services/api";
 import { getSession } from "next-auth/react";
+import NewEvent from "../../components/Modal/NewEvent";
 
 const Home: React.FC = () => {
   const currentUser = useCurrentUserContext();
@@ -19,6 +20,9 @@ const Home: React.FC = () => {
   const [chars, setChars] = useState<Array<CharDatabase>>();
   const [char, setChar] = useState<CharDatabase>();
   const [events, setEvents] = useState<Array<EventDatabase>>();
+  const [modal, setModal] = useState<{ newEvent: boolean }>({
+    newEvent: false,
+  });
 
   const settings = {
     speed: 500,
@@ -28,21 +32,17 @@ const Home: React.FC = () => {
     variableWidth: false,
   };
 
-  console.log("currentUser = ", currentUser);
-
   useEffect(() => {
     const charEvents = async (id: string) => {
       const session = await getSession();
       let eventsTemp;
-      if (session) eventsTemp = await getCharEvents(id, session.token);
-      console.log(eventsTemp?.data.record.events);
-      setEvents(eventsTemp?.data.record.events);
+      if (session) eventsTemp = await getEvents(session.token);
+      setEvents(eventsTemp?.data.record);
     };
     if (currentUser && currentUser !== null && currentUser.chars) {
       setChars(currentUser.chars.filter((c) => c.name !== char?.name));
       setChar(currentUser.chars[0]);
       charEvents(currentUser.chars[0].id);
-
       setLoading(false);
     }
   }, [char?.name, currentUser]);
@@ -51,6 +51,14 @@ const Home: React.FC = () => {
     <div className="d-flex justify-content-center flex-wrap overflow-hidden">
       {!loading && char ? (
         <>
+          <NewEvent
+            modalIsOpen={modal.newEvent}
+            closeModal={() => {
+              setModal({ ...modal, newEvent: false });
+            }}
+            loading={loading}
+            setLoading={setLoading}
+          />
           <div className="mb-4 w-100">
             <Header />
           </div>
@@ -61,7 +69,12 @@ const Home: React.FC = () => {
             <Slider {...settings}>
               {currentUser?.is_admin && (
                 <div key={char.name} className="px-2 ">
-                  <New title="Evento" />
+                  <New
+                    title="Evento"
+                    onClick={() => {
+                      setModal({ ...modal, newEvent: !modal.newEvent });
+                    }}
+                  />
                 </div>
               )}
               {events &&
