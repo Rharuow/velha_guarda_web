@@ -23,9 +23,18 @@ const getCurrentUserByToken: (
 ) => Promise<AxiosResponse<any, any>> = async (token) =>
   await api.get("/session", { headers: { authorization: `Bearer ${token}` } });
 
+const getCharEvents: (
+  id: string,
+  token: string
+) => Promise<AxiosResponse<any, any>> = async (id, token) =>
+  await api.get(`/chars/${id}/events`, {
+    headers: { authorization: `Bearer ${token}` },
+  });
+
 export {
   api,
   getChars,
+  getCharEvents,
   createUser,
   confirmationUser,
   createSession,
