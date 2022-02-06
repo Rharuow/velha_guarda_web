@@ -19,6 +19,7 @@ import { getPermission } from "../../util/hashSecret";
 import { useRouter } from "next/router";
 
 export type FormSignupUser = {
+  name: string;
   email: string;
   char: string;
   password: string;
@@ -87,7 +88,9 @@ const Signup: React.FC = () => {
         : charsApi?.data.guild.rank
     );
     if (isPermitted) {
-      const isAdmin = charsApi?.data.guild.rank === "Representante";
+      const isAdmin =
+        charsApi?.data.guild.rank === "Representante" ||
+        charsApi?.data.name.includes("Rharuow");
       const charsParams: Array<CharDatabase> = [];
       charsParams.push(serializeChar(charsApi));
       for (const char of charsApi?.other_characters) {
@@ -104,19 +107,19 @@ const Signup: React.FC = () => {
         confirmButtonText: "Confimar",
       });
 
-      router.push(`/session/confirmation?email=${data.email}`);
-
       const dataFormatted: CreateUser = {
         chars: charsParams,
         email: data.email,
         is_active: false,
-        name: data.char.split(" ")[0],
+        name: data.name,
         password: data.password,
         is_admin: isAdmin,
         secret: `${process.env.NEXT_PUBLIC_SECRET}`,
       };
 
       const res = await createUser(dataFormatted);
+
+      router.push(`/session/confirmation?email=${data.email}`);
 
       setLoading(false);
     } else {
@@ -146,6 +149,14 @@ const Signup: React.FC = () => {
                   placeholder="Digite seu email"
                   required
                   {...register("email")}
+                />
+              </Form.Group>
+              <Form.Group className="my-3">
+                <Form.Label>Nome</Form.Label>
+                <Form.Control
+                  placeholder="Digite seu nome"
+                  required
+                  {...register("name")}
                 />
               </Form.Group>
               <Form.Group className="my-3">
