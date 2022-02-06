@@ -79,3 +79,7 @@
     border-top-left-radius: #{$i}#{"%"};
   }
 }
+
+.border-dashed {
+  border-style: dashed;
+}
