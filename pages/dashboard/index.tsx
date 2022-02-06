@@ -15,22 +15,23 @@ const Home: React.FC = () => {
   const [char, setChar] = useState<CharDatabase>();
 
   const settings = {
-    dots: true,
     speed: 500,
-    slidesToShow: 1,
+    slidesToShow: 2,
     slidesToScroll: 1,
+    infinite: false,
+    variableWidth: false,
   };
 
   useEffect(() => {
     if (currentUser && currentUser !== null && currentUser.chars) {
-      setChars(currentUser.chars);
+      setChars(currentUser.chars.filter((c) => c.name !== char?.name));
       setChar(currentUser.chars[0]);
       setLoading(false);
     }
   }, [currentUser]);
 
   return (
-    <div className="d-flex justify-content-center flex-wrap">
+    <div className="d-flex justify-content-center flex-wrap overflow-hidden">
       {!loading && char ? (
         <>
           <div className="mb-4 w-100">
@@ -39,10 +40,10 @@ const Home: React.FC = () => {
           <div className="mb-4">
             <CharDetailed {...char} />
           </div>
-          <div className="mb-4">
-            <Slider {...settings}>
+          <div className="mb-4 w-100">
+            <Slider {...settings} className="h-100">
               {chars?.map((char) => (
-                <div key={char.name}>
+                <div key={char.name} className="px-2 ">
                   <Char {...char} />
                 </div>
               ))}
