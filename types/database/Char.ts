@@ -6,6 +6,7 @@ export type CharRegistration = {
 };
 
 export type CharDatabase = {
+  id: string;
   name: string;
   lvl: number;
   max_shared_lvl: number;
