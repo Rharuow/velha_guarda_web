@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { EventDatabase } from "../types/database/Event";
 import { CreateUser } from "../types/database/User";
 
 const api = axios.create({
@@ -23,18 +24,26 @@ const getCurrentUserByToken: (
 ) => Promise<AxiosResponse<any, any>> = async (token) =>
   await api.get("/session", { headers: { authorization: `Bearer ${token}` } });
 
-const getCharEvents: (
-  id: string,
-  token: string
-) => Promise<AxiosResponse<any, any>> = async (id, token) =>
-  await api.get(`/chars/${id}/events`, {
+const getEvents: (token: string) => Promise<AxiosResponse<any, any>> = async (
+  token
+) =>
+  await api.get("/events", {
+    headers: { authorization: `Bearer ${token}` },
+  });
+
+const createEvent: (
+  token: string,
+  data: EventDatabase
+) => Promise<AxiosResponse<any, any>> = async (token, data) =>
+  await api.post("/events", data, {
     headers: { authorization: `Bearer ${token}` },
   });
 
 export {
   api,
   getChars,
-  getCharEvents,
+  getEvents,
+  createEvent,
   createUser,
   confirmationUser,
   createSession,
