@@ -112,6 +112,7 @@ const NewEvent: React.FC<PropsNewEvent> = ({
                 </Form.Label>
                 <Form.Control
                   type="number"
+                  min="1"
                   max="1000"
                   placeholder="Ex: 5"
                   {...register("max_chars")}
@@ -134,6 +135,7 @@ const NewEvent: React.FC<PropsNewEvent> = ({
                 </Form.Label>
                 <Form.Control
                   type="number"
+                  min="1"
                   max="10000"
                   placeholder="Ex: 1000"
                   {...register("lvl_max")}
