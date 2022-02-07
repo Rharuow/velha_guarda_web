@@ -33,7 +33,7 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
-    const charEvents = async (id: string) => {
+    const charEvents = async () => {
       const session = await getSession();
       let eventsTemp;
       if (session) eventsTemp = await getEvents(session.token);
@@ -42,7 +42,7 @@ const Home: React.FC = () => {
     if (currentUser && currentUser !== null && currentUser.chars) {
       setChars(currentUser.chars.filter((c) => c.name !== char?.name));
       setChar(currentUser.chars[0]);
-      charEvents(currentUser.chars[0].id);
+      charEvents();
       setLoading(false);
     }
   }, [char?.name, currentUser]);
