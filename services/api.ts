@@ -21,8 +21,26 @@ const createSession = async (email: string, password: string) =>
 
 const getCurrentUserByToken: (
   token: string
-) => Promise<AxiosResponse<any, any>> = async (token) =>
-  await api.get("/session", { headers: { authorization: `Bearer ${token}` } });
+) => Promise<AxiosResponse<any, any>> = async (token) => {
+  try {
+    const res = await api.get("/session", {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    return res;
+  } catch (error) {
+    console.log("get session error = ", error);
+
+    const res: AxiosResponse<any, any> = {
+      data: "",
+      status: 401,
+      statusText: "unauthorized",
+      headers: {},
+      config: {},
+    };
+
+    return res;
+  }
+};
 
 const getEvents: (token: string) => Promise<AxiosResponse<any, any>> = async (
   token
