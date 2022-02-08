@@ -13,6 +13,7 @@ import { EventDatabase } from "../../types/database/Event";
 import { getEvents } from "../../services/api";
 import { getSession } from "next-auth/react";
 import NewEvent from "../../components/Modal/NewEvent";
+import NewMeet from "../../components/Modal/NewMeet";
 
 const Home: React.FC = () => {
   const currentUser = useCurrentUserContext();
@@ -20,8 +21,12 @@ const Home: React.FC = () => {
   const [chars, setChars] = useState<Array<CharDatabase>>();
   const [char, setChar] = useState<CharDatabase>();
   const [events, setEvents] = useState<Array<EventDatabase>>();
-  const [modal, setModal] = useState<{ newEvent: boolean }>({
-    newEvent: false,
+  const [modal, setModal] = useState<{
+    newEvent: { isOpen: boolean };
+    newMeet: { isOpen: boolean; event: string };
+  }>({
+    newEvent: { isOpen: false },
+    newMeet: { isOpen: false, event: "" },
   });
 
   const settings = {
@@ -52,12 +57,22 @@ const Home: React.FC = () => {
       {!loading && char ? (
         <>
           <NewEvent
-            modalIsOpen={modal.newEvent}
+            modalIsOpen={modal.newEvent.isOpen}
             closeModal={() => {
-              setModal({ ...modal, newEvent: false });
+              setModal({ ...modal, newEvent: { isOpen: false } });
             }}
             loading={loading}
             setLoading={setLoading}
+          />
+          <NewMeet
+            modalIsOpen={modal.newMeet.isOpen}
+            closeModal={() => {
+              setModal({ ...modal, newMeet: { isOpen: false, event: "" } });
+            }}
+            loading={loading}
+            setLoading={setLoading}
+            eventId={modal.newMeet.event}
+            char={char}
           />
           <div className="mb-4 w-100">
             <Header />
@@ -72,7 +87,10 @@ const Home: React.FC = () => {
                   <New
                     title="Evento"
                     onClick={() => {
-                      setModal({ ...modal, newEvent: !modal.newEvent });
+                      setModal({
+                        ...modal,
+                        newEvent: { isOpen: !modal.newEvent.isOpen },
+                      });
                     }}
                   />
                 </div>
@@ -80,7 +98,16 @@ const Home: React.FC = () => {
               {events &&
                 events.length > 0 &&
                 events.map((ev) => (
-                  <div key={ev.name} className="px-2 ">
+                  <div
+                    key={ev.name}
+                    className="px-2 "
+                    onClick={() => {
+                      setModal({
+                        ...modal,
+                        newMeet: { isOpen: true, event: ev.id ? ev.id : "" },
+                      });
+                    }}
+                  >
                     <Event {...ev} />
                   </div>
                 ))}
