@@ -4,8 +4,8 @@ export const getPermission: (secrete: string, kind: string) => boolean = (
 ) => {
   switch (kind) {
     case "Representante":
-      return secret === "avalanca";
+      return secret === `${process.env.NEXT_PUBLIC_ADMIN_SECRET}`;
     default:
-      return secret === "sodropaquemjoga";
+      return secret === `${process.env.NEXT_PUBLIC_USER_SECRET}`;
   }
 };
