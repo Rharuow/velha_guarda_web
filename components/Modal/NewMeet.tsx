@@ -88,7 +88,7 @@ const NewMeet: React.FC<PropsNewMeet> = ({
       setEvent(tempEvent);
     };
     recoveryEvent();
-  }, []);
+  }, [eventId]);
 
   return (
     <Modal isOpen={modalIsOpen}>
