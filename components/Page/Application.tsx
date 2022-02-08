@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import ReactLoading from "react-loading";
@@ -16,11 +16,11 @@ const Application: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
+    console.log("session = ", session);
     const getCurrentUser = async () => {
-      const tempUser = (await getCurrentUserByToken(`${session?.data?.token}`))
-        .data.record as User;
-
-      setUser(tempUser);
+      const tempUser = await getCurrentUserByToken(`${session?.data?.token}`);
+      if (tempUser?.statusText.includes("unauthorized")) signOut();
+      setUser(tempUser.data.record as User);
     };
     if (session && session.data && session.data.token) getCurrentUser();
     if (
