@@ -84,7 +84,7 @@ const createMeet: (
   token: string,
   data: CreateMeetDatabase
 ) => Promise<AxiosResponse<any, any>> = async (token, data) =>
-  await api.post("/meeting", data, {
+  await api.post("/meetings", data, {
     headers: { authorization: `Bearer ${token}` },
   });
 
