@@ -12,7 +12,7 @@ export const serializeChar: (char: Char) => CharDatabase = (char: Char) => ({
   sex: char.data.sex.includes("male") ? "m" : "f",
   voc: char.data.vocation.includes("Knight")
     ? "ek"
-    : char.data.vocation.includes("Socer")
+    : char.data.vocation.includes("Sorcerer")
     ? "ms"
     : char.data.vocation.includes("Druid")
     ? "ed"
