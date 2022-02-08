@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { EventDatabase } from "../types/database/Event";
+import { CreateMeetDatabase } from "../types/database/Meet";
 import { CreateUser } from "../types/database/User";
 
 const api = axios.create({
@@ -49,6 +50,28 @@ const getEvents: (token: string) => Promise<AxiosResponse<any, any>> = async (
     headers: { authorization: `Bearer ${token}` },
   });
 
+const getEvent: (
+  token: string,
+  id: string
+) => Promise<AxiosResponse<any, any>> = async (token, id) => {
+  try {
+    const res = await api.get(`/events/${id}`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+
+    return res;
+  } catch (error) {
+    const res: AxiosResponse<any, any> = {
+      config: {},
+      data: {},
+      headers: {},
+      status: 401,
+      statusText: "unauthorized",
+    };
+    return res;
+  }
+};
+
 const createEvent: (
   token: string,
   data: EventDatabase
@@ -57,10 +80,20 @@ const createEvent: (
     headers: { authorization: `Bearer ${token}` },
   });
 
+const createMeet: (
+  token: string,
+  data: CreateMeetDatabase
+) => Promise<AxiosResponse<any, any>> = async (token, data) =>
+  await api.post("/meeting", data, {
+    headers: { authorization: `Bearer ${token}` },
+  });
+
 export {
   api,
   getChars,
   getEvents,
+  getEvent,
+  createMeet,
   createEvent,
   createUser,
   confirmationUser,
