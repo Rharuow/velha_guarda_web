@@ -9,9 +9,16 @@ export type PropsMeet = {
   start_at: string;
   location?: string;
   event: EventDatabase;
+  className?: string;
 };
 
-const Meet: React.FC<PropsMeet> = ({ id, start_at, location, event }) => {
+const Meet: React.FC<PropsMeet> = ({
+  id,
+  start_at,
+  location,
+  event,
+  className,
+}) => {
   const [partners, setPartners] = useState<Array<CharDatabase>>();
 
   const date: string =
@@ -32,7 +39,7 @@ const Meet: React.FC<PropsMeet> = ({ id, start_at, location, event }) => {
   }, [id]);
 
   return (
-    <Card>
+    <Card className={`${className ? className : ""}`}>
       <Card.Header>
         <p className="text-center">{event.name}</p>
       </Card.Header>
