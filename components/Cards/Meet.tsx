@@ -33,7 +33,7 @@ const Meet: React.FC<PropsMeet> = ({ id, start_at, location, event }) => {
       setPartners(tempParnter);
     };
     recoverPartners();
-  });
+  }, [id]);
 
   return (
     <Card>
