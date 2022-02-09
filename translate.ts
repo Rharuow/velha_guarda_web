@@ -16,6 +16,7 @@ export const translate = (language = "pt-BR") => {
         error: "Algo deu errado, desculpe!",
         "Event was registred": "O evento foi registrado com sucesso",
         "Meet was registred": "O encontro foi registrado com sucesso",
+        "Your char was add on meet": "Seu Char foi adicionado ao encontro",
       };
   }
 };
