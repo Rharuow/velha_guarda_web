@@ -1,10 +1,13 @@
+import { EventDatabase } from "./Event";
+
 export type MeetDatabase = {
   id: string;
-  start_at: Date;
-  finished_at: Date;
+  start_at: Date | string;
+  finished_at: Date | string;
   location: string;
   avalible: boolean;
   char_id: string;
+  event: EventDatabase;
   event_id: string;
 };
 

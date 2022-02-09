@@ -10,6 +10,10 @@ const api = axios.create({
   },
 });
 
+const setToken = (token: string) => ({
+  headers: { authorization: `Bearer ${token}` },
+});
+
 const getChars = async () => (await api.get("/chars")).data;
 
 const createUser = async (body: CreateUser) => await api.post("/users", body);
@@ -24,16 +28,14 @@ const getCurrentUserByToken: (
   token: string
 ) => Promise<AxiosResponse<any, any>> = async (token) => {
   try {
-    const res = await api.get("/session", {
-      headers: { authorization: `Bearer ${token}` },
-    });
+    const res = await api.get("/session", setToken(token));
     return res;
   } catch (error) {
     console.log("get session error = ", error);
 
     const res: AxiosResponse<any, any> = {
       data: "",
-      status: 401,
+      status: 300,
       statusText: "unauthorized",
       headers: {},
       config: {},
@@ -45,19 +47,14 @@ const getCurrentUserByToken: (
 
 const getEvents: (token: string) => Promise<AxiosResponse<any, any>> = async (
   token
-) =>
-  await api.get("/events", {
-    headers: { authorization: `Bearer ${token}` },
-  });
+) => await api.get("/events", setToken(token));
 
 const getEvent: (
   token: string,
   id: string
 ) => Promise<AxiosResponse<any, any>> = async (token, id) => {
   try {
-    const res = await api.get(`/events/${id}`, {
-      headers: { authorization: `Bearer ${token}` },
-    });
+    const res = await api.get(`/events/${id}`, setToken(token));
 
     return res;
   } catch (error) {
@@ -65,7 +62,7 @@ const getEvent: (
       config: {},
       data: {},
       headers: {},
-      status: 401,
+      status: 300,
       statusText: "unauthorized",
     };
     return res;
@@ -76,21 +73,74 @@ const createEvent: (
   token: string,
   data: EventDatabase
 ) => Promise<AxiosResponse<any, any>> = async (token, data) =>
-  await api.post("/events", data, {
-    headers: { authorization: `Bearer ${token}` },
-  });
+  await api.post("/events", data, setToken(token));
 
 const createMeet: (
   token: string,
   data: CreateMeetDatabase
 ) => Promise<AxiosResponse<any, any>> = async (token, data) =>
-  await api.post("/meetings", data, {
-    headers: { authorization: `Bearer ${token}` },
-  });
+  await api.post("/meetings", data, setToken(token));
+
+const getCharMeetings: (
+  token: string,
+  charId: string
+) => Promise<AxiosResponse<any, any>> = async (token, charId) => {
+  try {
+    const res = await api.get(`chars/${charId}/meetings`, setToken(token));
+    return res;
+  } catch (error) {
+    console.log(" get char meetings = ", error);
+    return {
+      config: {},
+      data: {},
+      headers: {},
+      status: 300,
+      statusText: `get char meetings = ${error}`,
+    };
+  }
+};
+const getMeetings: (token: string) => Promise<AxiosResponse<any, any>> = async (
+  token
+) => {
+  try {
+    const res = await api.get(`/meetings`, setToken(token));
+    return res;
+  } catch (error) {
+    console.log(" get meetings = ", error);
+    return {
+      config: {},
+      data: {},
+      headers: {},
+      status: 300,
+      statusText: `get meetings = ${error}`,
+    };
+  }
+};
+
+const getMeetChars: (
+  token: string,
+  meetId: string
+) => Promise<AxiosResponse<any, any>> = async (token, meetId) => {
+  try {
+    const res = await api.get(`meetings/${meetId}/chars`, setToken(token));
+    return res;
+  } catch (error) {
+    return {
+      config: {},
+      data: {},
+      headers: {},
+      status: 300,
+      statusText: `get meet chars = ${error}`,
+    };
+  }
+};
 
 export {
   api,
   getChars,
+  getCharMeetings,
+  getMeetChars,
+  getMeetings,
   getEvents,
   getEvent,
   createMeet,

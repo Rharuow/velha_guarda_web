@@ -10,8 +10,6 @@ const Error: React.FC = () => {
     error: "Request failed with status code 401" | "error";
   };
 
-  console.log("router = ", router);
-
   return (
     <div className="min-h-100vh d-flex justify-content-center align-items-center">
       <Alert variant="warning">
