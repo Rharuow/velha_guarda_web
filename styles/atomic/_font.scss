@@ -1,0 +1,5 @@
+@for $i from 1 through 30 {
+  .fs-#{$i}px {
+    font-size: #{$i}px;
+  }
+}
