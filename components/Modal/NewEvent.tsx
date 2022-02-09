@@ -1,6 +1,5 @@
 import React from "react";
 import { Button, Card, Form } from "react-bootstrap";
-import { getSession } from "next-auth/react";
 import Modal from "react-modal";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
@@ -12,7 +11,6 @@ import { useRouter } from "next/router";
 
 export type PropsNewEvent = {
   modalIsOpen: boolean;
-  afterOpenModal?: () => void;
   closeModal: () => void;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,7 +18,6 @@ export type PropsNewEvent = {
 
 const NewEvent: React.FC<PropsNewEvent> = ({
   modalIsOpen,
-  afterOpenModal,
   closeModal,
   loading,
   setLoading,
@@ -48,9 +45,7 @@ const NewEvent: React.FC<PropsNewEvent> = ({
       min_chars: min_chars ? min_chars : 1,
     };
 
-    const session = await getSession();
-
-    const res = await createEvent(`${session?.token}`, dataFormatted);
+    const res = await createEvent(dataFormatted);
 
     Swal.fire({
       title: translate()["Greate!"],

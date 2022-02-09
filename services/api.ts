@@ -11,6 +11,16 @@ const api = axios.create({
   },
 });
 
+const setError = (message: string) => {
+  return {
+    config: {},
+    data: {},
+    headers: {},
+    status: 300,
+    statusText: message,
+  };
+};
+
 const setToken = async () => {
   const session = await getSession();
   if (session)
@@ -48,15 +58,7 @@ const getCurrentUserByToken: () => Promise<
   } catch (error) {
     console.log("get session error = ", error);
 
-    const res: AxiosResponse<any, any> = {
-      data: "",
-      status: 300,
-      statusText: "unauthorized",
-      headers: {},
-      config: {},
-    };
-
-    return res;
+    return setError(`get session error = ${error}`);
   }
 };
 
@@ -76,14 +78,7 @@ const getEvent: (id: string) => Promise<AxiosResponse<any, any>> = async (
 
     return res;
   } catch (error) {
-    const res: AxiosResponse<any, any> = {
-      config: {},
-      data: {},
-      headers: {},
-      status: 300,
-      statusText: "unauthorized",
-    };
-    return res;
+    return setError(`get event error = ${error}`);
   }
 };
 
@@ -113,13 +108,7 @@ const getCharMeetings: (
     return res;
   } catch (error) {
     console.log(" get char meetings = ", error);
-    return {
-      config: {},
-      data: {},
-      headers: {},
-      status: 300,
-      statusText: `get char meetings = ${error}`,
-    };
+    return setError(`get char meetings= ${error}`);
   }
 };
 const getMeetings: () => Promise<AxiosResponse<any, any>> = async () => {
@@ -130,13 +119,7 @@ const getMeetings: () => Promise<AxiosResponse<any, any>> = async () => {
     return res;
   } catch (error) {
     console.log(" get meetings = ", error);
-    return {
-      config: {},
-      data: {},
-      headers: {},
-      status: 300,
-      statusText: `get meetings = ${error}`,
-    };
+    return setError(`get meetings error = ${error}`);
   }
 };
 
@@ -149,13 +132,27 @@ const getMeetChars: (
     const res = await api.get(`meetings/${meetId}/chars`, authorization);
     return res;
   } catch (error) {
-    return {
-      config: {},
-      data: {},
-      headers: {},
-      status: 300,
-      statusText: `get meet chars = ${error}`,
-    };
+    console.log(`get meet chars error = ${error}`);
+    return setError(`get meet chars error = ${error}`);
+  }
+};
+
+const joinCharMeet: (
+  charId: string,
+  meetId: string
+) => Promise<AxiosResponse<any, any>> = async (
+  charId: string,
+  meetId: string
+) => {
+  try {
+    const authorization = await setToken();
+    return await api.put(
+      `/meetings/${meetId}`,
+      { char_id: charId },
+      authorization
+    );
+  } catch (error) {
+    return setError(`get meet chars = ${error}`);
   }
 };
 
@@ -164,6 +161,7 @@ export {
   getChars,
   getChar,
   getCharMeetings,
+  getCurrentUserByToken,
   getMeetChars,
   getMeetings,
   getEvents,
@@ -173,5 +171,5 @@ export {
   createUser,
   confirmationUser,
   createSession,
-  getCurrentUserByToken,
+  joinCharMeet,
 };

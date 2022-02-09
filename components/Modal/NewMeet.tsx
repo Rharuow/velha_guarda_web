@@ -9,7 +9,7 @@ import { createEvent, createMeet, getEvent } from "../../services/api";
 import { translate } from "../../translate";
 import { useRouter } from "next/router";
 import {
-  CreateFornmMeetDatabase,
+  CreateFormMeetDatabase,
   CreateMeetDatabase,
 } from "../../types/database/Meet";
 import { CharDatabase } from "../../types/database/Char";
@@ -50,7 +50,7 @@ const NewMeet: React.FC<PropsNewMeet> = ({
       : new Date().getDate()
   }T${new Date().getHours()}:${new Date().getMinutes()}`;
 
-  const onSubmit = async ({ start_at, location }: CreateFornmMeetDatabase) => {
+  const onSubmit = async ({ start_at, location }: CreateFormMeetDatabase) => {
     setLoading(true);
 
     const dataFormatted: CreateMeetDatabase = {

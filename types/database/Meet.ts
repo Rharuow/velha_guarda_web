@@ -1,3 +1,4 @@
+import { CharDatabase } from "./Char";
 import { EventDatabase } from "./Event";
 
 export type MeetDatabase = {
@@ -9,6 +10,7 @@ export type MeetDatabase = {
   char_id: string;
   event: EventDatabase;
   event_id: string;
+  chars: Array<CharDatabase>;
 };
 
 export type CreateMeetDatabase = {
@@ -18,7 +20,7 @@ export type CreateMeetDatabase = {
   event_id: string;
 };
 
-export type CreateFornmMeetDatabase = {
+export type CreateFormMeetDatabase = {
   start_at: Date;
   location?: string;
 };
