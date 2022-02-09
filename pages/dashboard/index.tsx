@@ -10,10 +10,12 @@ import { CharDatabase } from "../../types/database/Char";
 import Event from "../../components/Cards/Event";
 import New from "../../components/Cards/New";
 import { EventDatabase } from "../../types/database/Event";
-import { getEvents } from "../../services/api";
+import { getEvents, getMeetings } from "../../services/api";
 import { getSession } from "next-auth/react";
 import NewEvent from "../../components/Modal/NewEvent";
 import NewMeet from "../../components/Modal/NewMeet";
+import { MeetDatabase } from "../../types/database/Meet";
+import Meet from "../../components/Cards/Meet";
 
 const Home: React.FC = () => {
   const currentUser = useCurrentUserContext();
@@ -21,6 +23,7 @@ const Home: React.FC = () => {
   const [chars, setChars] = useState<Array<CharDatabase>>();
   const [char, setChar] = useState<CharDatabase>();
   const [events, setEvents] = useState<Array<EventDatabase>>();
+  const [meetings, setMeetings] = useState<Array<MeetDatabase>>();
   const [modal, setModal] = useState<{
     newEvent: { isOpen: boolean };
     newMeet: { isOpen: boolean; event: string };
@@ -44,13 +47,24 @@ const Home: React.FC = () => {
       if (session) eventsTemp = await getEvents(session.token);
       setEvents(eventsTemp?.data.record);
     };
+
+    const charMeetings = async () => {
+      const session = await getSession();
+      let tempMeeting;
+      if (session && char && char.id)
+        tempMeeting = await getMeetings(session.token);
+      console.log(tempMeeting);
+      setMeetings(tempMeeting?.data.record);
+    };
+
     if (currentUser && currentUser !== null && currentUser.chars) {
       setChars(currentUser.chars.filter((c) => c.name !== char?.name));
       setChar(currentUser.chars[0]);
       charEvents();
+      charMeetings();
       setLoading(false);
     }
-  }, [char?.name, currentUser]);
+  }, [char, char?.name, currentUser]);
 
   return (
     <div className="d-flex justify-content-center flex-wrap overflow-hidden">
@@ -113,6 +127,37 @@ const Home: React.FC = () => {
                 ))}
             </Slider>
           </div>
+          <div className="mb-4 w-100">
+            <Slider {...settings}>
+              {meetings &&
+                meetings.length > 0 &&
+                meetings.map((meet) => (
+                  <div
+                    key={meet.event.name}
+                    className="px-2 "
+                    // onClick={() => {
+                    //   setModal({
+                    //     ...modal,
+                    //     newMeet: {
+                    //       isOpen: true,
+                    //       meetent: meet.id ? meet.id : "",
+                    //     },
+                    //   });
+                    // }}
+                  >
+                    <Meet
+                      event={meet.event}
+                      id={meet.id}
+                      start_at={`${meet.start_at}`}
+                      location={
+                        meet.location ? meet.location : "Sem local marcado"
+                      }
+                    />
+                  </div>
+                ))}
+            </Slider>
+          </div>
+
           <div className="mb-4 w-100">
             <Slider {...settings} className="h-100">
               {chars?.map((char) => (

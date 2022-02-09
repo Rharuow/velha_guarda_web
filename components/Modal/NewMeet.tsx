@@ -50,8 +50,6 @@ const NewMeet: React.FC<PropsNewMeet> = ({
       : new Date().getDate()
   }T${new Date().getHours()}:${new Date().getMinutes()}`;
 
-  console.log(now);
-
   const onSubmit = async ({ start_at, location }: CreateFornmMeetDatabase) => {
     setLoading(true);
 
