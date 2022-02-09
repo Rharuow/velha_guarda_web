@@ -62,7 +62,7 @@ const NewMeet: React.FC<PropsNewMeet> = ({
 
     const session = await getSession();
 
-    session && (await createMeet(session.token, dataFormatted));
+    session && (await createMeet(dataFormatted));
 
     Swal.fire({
       title: translate()["Greate!"],
@@ -81,8 +81,7 @@ const NewMeet: React.FC<PropsNewMeet> = ({
       const session = await getSession();
       let tempEvent;
       if (session)
-        tempEvent = (await getEvent(session?.token, eventId)).data
-          .record as EventDatabase;
+        tempEvent = (await getEvent(eventId)).data.record as EventDatabase;
       setEvent(tempEvent);
     };
     recoveryEvent();

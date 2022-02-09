@@ -10,8 +10,7 @@ import { CharDatabase } from "../../types/database/Char";
 import Event from "../../components/Cards/Event";
 import New from "../../components/Cards/New";
 import { EventDatabase } from "../../types/database/Event";
-import { getEvents, getMeetings } from "../../services/api";
-import { getSession } from "next-auth/react";
+import { getChar, getChars, getEvents, getMeetings } from "../../services/api";
 import NewEvent from "../../components/Modal/NewEvent";
 import NewMeet from "../../components/Modal/NewMeet";
 import { MeetDatabase } from "../../types/database/Meet";
@@ -32,6 +31,21 @@ const Home: React.FC = () => {
     newMeet: { isOpen: false, event: "" },
   });
 
+  const handleCharProfile = async (id: string) => {
+    try {
+      const tempChar = (await getChar(id)).data.record;
+      setChar(tempChar);
+
+      const tempChars = (await getChars()).data.record.filter(
+        (char: CharDatabase) => char.name !== tempChar.name
+      );
+
+      setChars(tempChars);
+    } catch (error) {
+      console.log(`handleCharProfile Error = ${error}`);
+    }
+  };
+
   const settings = {
     speed: 500,
     slidesToShow: 2,
@@ -42,29 +56,26 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const charEvents = async () => {
-      const session = await getSession();
-      let eventsTemp;
-      if (session) eventsTemp = await getEvents(session.token);
+      const eventsTemp = await getEvents();
       setEvents(eventsTemp?.data.record);
     };
 
     const charMeetings = async () => {
-      const session = await getSession();
-      let tempMeeting;
-      if (session && char && char.id)
-        tempMeeting = await getMeetings(session.token);
+      const tempMeeting = await getMeetings();
       console.log(tempMeeting);
       setMeetings(tempMeeting?.data.record);
     };
 
     if (currentUser && currentUser !== null && currentUser.chars) {
-      setChars(currentUser.chars.filter((c) => c.name !== char?.name));
       setChar(currentUser.chars[0]);
+      setChars(
+        currentUser.chars.filter((c, index, self) => c.name !== self[0].name)
+      );
       charEvents();
       charMeetings();
       setLoading(false);
     }
-  }, [char, char?.name, currentUser]);
+  }, [currentUser]);
 
   return (
     <div className="d-flex justify-content-center flex-wrap overflow-hidden">
@@ -161,7 +172,11 @@ const Home: React.FC = () => {
           <div className="mb-4 w-100">
             <Slider {...settings} className="h-100">
               {chars?.map((char) => (
-                <div key={char.name} className="px-2 ">
+                <div
+                  key={char.name}
+                  className="px-2"
+                  onClick={() => char && char.id && handleCharProfile(char.id)}
+                >
                   <Char {...char} />
                 </div>
               ))}

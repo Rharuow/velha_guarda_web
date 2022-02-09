@@ -1,4 +1,3 @@
-import { getSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { Card, ListGroup } from "react-bootstrap";
 import { getMeetChars } from "../../services/api";
@@ -26,10 +25,7 @@ const Meet: React.FC<PropsMeet> = ({ id, start_at, location, event }) => {
 
   useEffect(() => {
     const recoverPartners = async () => {
-      const session = await getSession();
-      let tempParnter;
-      if (session)
-        tempParnter = (await getMeetChars(session.token, id)).data.record.chars;
+      const tempParnter = (await getMeetChars(id)).data.record.chars;
       setPartners(tempParnter);
     };
     recoverPartners();

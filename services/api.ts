@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { getSession } from "next-auth/react";
 import { EventDatabase } from "../types/database/Event";
 import { CreateMeetDatabase } from "../types/database/Meet";
 import { CreateUser } from "../types/database/User";
@@ -10,13 +11,26 @@ const api = axios.create({
   },
 });
 
-const setToken = (token: string) => ({
-  headers: { authorization: `Bearer ${token}` },
-});
+const setToken = async () => {
+  const session = await getSession();
+  if (session)
+    return {
+      headers: { authorization: `Bearer ${session.token}` },
+    };
+  return {};
+};
 
-const getChars = async () => (await api.get("/chars")).data;
+const getChars = async () => {
+  const authorization = await setToken();
+  return await api.get("/chars", authorization);
+};
 
-const createUser = async (body: CreateUser) => await api.post("/users", body);
+const getChar = async (id: string) => {
+  const authorization = await setToken();
+  return await api.get(`/chars/${id}`, authorization);
+};
+
+const createUser = async (data: CreateUser) => await api.post("/users", data);
 
 const confirmationUser = async (token: string, email: string) =>
   await api.get(`/users/confirmation/${email}/${token}`);
@@ -24,11 +38,12 @@ const confirmationUser = async (token: string, email: string) =>
 const createSession = async (email: string, password: string) =>
   await api.post("/session", { email, password });
 
-const getCurrentUserByToken: (
-  token: string
-) => Promise<AxiosResponse<any, any>> = async (token) => {
+const getCurrentUserByToken: () => Promise<
+  AxiosResponse<any, any>
+> = async () => {
+  const authorization = await setToken();
   try {
-    const res = await api.get("/session", setToken(token));
+    const res = await api.get("/session", authorization);
     return res;
   } catch (error) {
     console.log("get session error = ", error);
@@ -45,16 +60,19 @@ const getCurrentUserByToken: (
   }
 };
 
-const getEvents: (token: string) => Promise<AxiosResponse<any, any>> = async (
-  token
-) => await api.get("/events", setToken(token));
+const getEvents: () => Promise<AxiosResponse<any, any>> = async () => {
+  const authorization = await setToken();
 
-const getEvent: (
-  token: string,
-  id: string
-) => Promise<AxiosResponse<any, any>> = async (token, id) => {
+  return await api.get("/events", authorization);
+};
+
+const getEvent: (id: string) => Promise<AxiosResponse<any, any>> = async (
+  id
+) => {
   try {
-    const res = await api.get(`/events/${id}`, setToken(token));
+    const authorization = await setToken();
+
+    const res = await api.get(`/events/${id}`, authorization);
 
     return res;
   } catch (error) {
@@ -70,23 +88,28 @@ const getEvent: (
 };
 
 const createEvent: (
-  token: string,
   data: EventDatabase
-) => Promise<AxiosResponse<any, any>> = async (token, data) =>
-  await api.post("/events", data, setToken(token));
+) => Promise<AxiosResponse<any, any>> = async (data) => {
+  const authorization = await setToken();
+
+  return await api.post("/events", data, authorization);
+};
 
 const createMeet: (
-  token: string,
   data: CreateMeetDatabase
-) => Promise<AxiosResponse<any, any>> = async (token, data) =>
-  await api.post("/meetings", data, setToken(token));
+) => Promise<AxiosResponse<any, any>> = async (data) => {
+  const authorization = await setToken();
+
+  return await api.post("/meetings", data, authorization);
+};
 
 const getCharMeetings: (
-  token: string,
   charId: string
-) => Promise<AxiosResponse<any, any>> = async (token, charId) => {
+) => Promise<AxiosResponse<any, any>> = async (charId) => {
   try {
-    const res = await api.get(`chars/${charId}/meetings`, setToken(token));
+    const authorization = await setToken();
+
+    const res = await api.get(`chars/${charId}/meetings`, authorization);
     return res;
   } catch (error) {
     console.log(" get char meetings = ", error);
@@ -99,11 +122,11 @@ const getCharMeetings: (
     };
   }
 };
-const getMeetings: (token: string) => Promise<AxiosResponse<any, any>> = async (
-  token
-) => {
+const getMeetings: () => Promise<AxiosResponse<any, any>> = async () => {
   try {
-    const res = await api.get(`/meetings`, setToken(token));
+    const authorization = await setToken();
+
+    const res = await api.get(`/meetings`, authorization);
     return res;
   } catch (error) {
     console.log(" get meetings = ", error);
@@ -118,11 +141,12 @@ const getMeetings: (token: string) => Promise<AxiosResponse<any, any>> = async (
 };
 
 const getMeetChars: (
-  token: string,
   meetId: string
-) => Promise<AxiosResponse<any, any>> = async (token, meetId) => {
+) => Promise<AxiosResponse<any, any>> = async (meetId) => {
   try {
-    const res = await api.get(`meetings/${meetId}/chars`, setToken(token));
+    const authorization = await setToken();
+
+    const res = await api.get(`meetings/${meetId}/chars`, authorization);
     return res;
   } catch (error) {
     return {
@@ -138,6 +162,7 @@ const getMeetChars: (
 export {
   api,
   getChars,
+  getChar,
   getCharMeetings,
   getMeetChars,
   getMeetings,

@@ -17,7 +17,7 @@ const Application: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     const getCurrentUser = async () => {
-      const tempUser = await getCurrentUserByToken(`${session?.data?.token}`);
+      const tempUser = await getCurrentUserByToken();
       if (tempUser?.statusText.includes("unauthorized")) signOut();
       setUser(tempUser.data.record as User);
     };
