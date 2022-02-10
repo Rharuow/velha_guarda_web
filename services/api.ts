@@ -166,7 +166,18 @@ const deleteCharMeet: (
       authorization
     );
   } catch (error) {
-    return setError(`get meet chars = ${error}`);
+    return setError(`delete char meet = ${error}`);
+  }
+};
+
+const deleteMeet: (meetId: string) => Promise<AxiosResponse<any, any>> = async (
+  meetId: string
+) => {
+  try {
+    const authorization = await setToken();
+    return await api.delete(`/meetings/${meetId}`, authorization);
+  } catch (error) {
+    return setError(`delete meet = ${error}`);
   }
 };
 
@@ -179,6 +190,7 @@ export {
   getCurrentUserByToken,
   getMeetChars,
   getMeetings,
+  deleteMeet,
   getEvents,
   getEvent,
   createMeet,

@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "react-bootstrap";
 import Modal from "react-modal";
 import Swal from "sweetalert2";
-import { deleteCharMeet, insertCharMeet } from "../../services/api";
+import { deleteCharMeet, deleteMeet, insertCharMeet } from "../../services/api";
 import { translate } from "../../translate";
 import { CharDatabase } from "../../types/database/Char";
 import { MeetDatabase } from "../../types/database/Meet";
@@ -24,6 +24,9 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
   char,
 }) => {
   const router = useRouter();
+
+  console.log(char.id);
+  console.log(meet?.char_id);
 
   const handleDeleteCharToMeet = async () => {
     if (char.id && meet) {
@@ -50,28 +53,50 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
   };
 
   const handleAddCharToMeet = async () => {
-    try {
-      if (meet && char.id) {
-        await insertCharMeet(char.id, meet.id);
+    if (meet && char.id) {
+      const res = await insertCharMeet(char.id, meet.id);
 
-        Swal.fire({
-          title: translate()["Greate!"],
-          text: translate()["Your char was add on meet"],
-          icon: "success",
-          confirmButtonText: "Confimar",
-        }).then(() => {
-          router.reload();
-        });
-      }
-    } catch (error) {
-      Swal.fire({
-        title: translate()["ops!"],
-        text: `${error}`,
-        icon: "error",
-        confirmButtonText: "Confimar",
-      }).then(() => {
-        router.reload();
-      });
+      res.status === 300
+        ? Swal.fire({
+            title: translate()["ops!"],
+            text: translate().error,
+            icon: "error",
+            confirmButtonText: "Confimar",
+          }).then(() => {
+            router.reload();
+          })
+        : Swal.fire({
+            title: translate()["Greate!"],
+            text: translate()["Your char was add on meet"],
+            icon: "success",
+            confirmButtonText: "Confimar",
+          }).then(() => {
+            router.reload();
+          });
+    }
+  };
+
+  const handleDeleteToMeet = async () => {
+    if (meet && char.id) {
+      const res = await deleteMeet(meet.id);
+
+      res.status === 300
+        ? Swal.fire({
+            title: translate()["ops!"],
+            text: translate().error,
+            icon: "error",
+            confirmButtonText: "Confimar",
+          }).then(() => {
+            router.reload();
+          })
+        : Swal.fire({
+            title: translate()["Greate!"],
+            text: translate()["Meet deleted with success"],
+            icon: "success",
+            confirmButtonText: "Confimar",
+          }).then(() => {
+            router.reload();
+          });
     }
   };
 
@@ -111,17 +136,26 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
                 </Button>
               </div>
             </>
+          ) : char.id !== meet.char_id ? (
+            <Button
+              className="mt-4"
+              size="sm"
+              variant="danger"
+              onClick={() => handleDeleteCharToMeet()}
+            >
+              Abandonar encontro
+            </Button>
           ) : (
-            <>
+            char.id === meet.char_id && (
               <Button
                 className="mt-4"
                 size="sm"
                 variant="danger"
-                onClick={() => handleDeleteCharToMeet()}
+                onClick={() => handleDeleteToMeet()}
               >
-                Abandonar encontro
+                Remove Encontro
               </Button>
-            </>
+            )
           )}
         </div>
       )}
