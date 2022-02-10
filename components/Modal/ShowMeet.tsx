@@ -1,5 +1,6 @@
+import _ from "lodash";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import Modal from "react-modal";
 import Swal from "sweetalert2";
@@ -9,6 +10,7 @@ import { CharDatabase } from "../../types/database/Char";
 import { MeetDatabase } from "../../types/database/Meet";
 import Char from "../Cards/Char";
 import Meet from "../Cards/Meet";
+import { useCurrentUserContext } from "../Page/Application";
 
 export type PropsShowMeet = {
   isOpen: boolean;
@@ -25,8 +27,11 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
 }) => {
   const router = useRouter();
 
-  console.log(char.id);
-  console.log(meet?.char_id);
+  const [userAlreadyAtMeet, setUserAlreadyAtMeet] = useState<boolean>();
+
+  const currentUser = useCurrentUserContext();
+
+  console.log(userAlreadyAtMeet);
 
   const handleDeleteCharToMeet = async () => {
     if (char.id && meet) {
@@ -100,6 +105,14 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
     }
   };
 
+  useEffect(() => {
+    if (meet?.chars)
+      setUserAlreadyAtMeet(
+        _.differenceBy(currentUser?.chars, meet?.chars, "name").length !==
+          currentUser?.chars?.length
+      );
+  }, [currentUser?.chars, meet?.chars]);
+
   return (
     <Modal isOpen={isOpen}>
       <div className="d-flex flex-row-reverse w-100 mb-2 align-self-start">
@@ -122,7 +135,8 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
             start_at={`${meet.start_at}`}
             location={meet.location}
           />
-          {!meet?.chars.some((c) => char.name === c.name) ? (
+          {!meet?.chars.some((c) => char.name === c.name) &&
+          !userAlreadyAtMeet ? (
             <>
               <span className="mb-3 fw-bold">Participar com esse char?</span>
               <Char {...char} />
@@ -136,7 +150,7 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
                 </Button>
               </div>
             </>
-          ) : char.id !== meet.char_id ? (
+          ) : char.id !== meet.char_id && !userAlreadyAtMeet ? (
             <Button
               className="mt-4"
               size="sm"

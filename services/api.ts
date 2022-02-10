@@ -146,7 +146,11 @@ const insertCharMeet: (
 ) => {
   try {
     const authorization = await setToken();
-    return await api.put(`/meetings/${meetId}/chars${charId}`, authorization);
+    return await api.put(
+      `/meetings/${meetId}/chars/${charId}`,
+      {},
+      authorization
+    );
   } catch (error) {
     return setError(`get meet chars = ${error}`);
   }
