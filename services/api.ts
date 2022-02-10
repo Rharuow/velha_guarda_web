@@ -137,7 +137,7 @@ const getMeetChars: (
   }
 };
 
-const joinCharMeet: (
+const insertCharMeet: (
   charId: string,
   meetId: string
 ) => Promise<AxiosResponse<any, any>> = async (
@@ -146,9 +146,23 @@ const joinCharMeet: (
 ) => {
   try {
     const authorization = await setToken();
-    return await api.put(
-      `/meetings/${meetId}`,
-      { char_id: charId },
+    return await api.put(`/meetings/${meetId}/chars${charId}`, authorization);
+  } catch (error) {
+    return setError(`get meet chars = ${error}`);
+  }
+};
+
+const deleteCharMeet: (
+  charId: string,
+  meetId: string
+) => Promise<AxiosResponse<any, any>> = async (
+  charId: string,
+  meetId: string
+) => {
+  try {
+    const authorization = await setToken();
+    return await api.delete(
+      `/meetings/${meetId}/chars/${charId}`,
       authorization
     );
   } catch (error) {
@@ -158,6 +172,7 @@ const joinCharMeet: (
 
 export {
   api,
+  deleteCharMeet,
   getChars,
   getChar,
   getCharMeetings,
@@ -171,5 +186,5 @@ export {
   createUser,
   confirmationUser,
   createSession,
-  joinCharMeet,
+  insertCharMeet,
 };

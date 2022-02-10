@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "react-bootstrap";
 import Modal from "react-modal";
 import Swal from "sweetalert2";
-import { joinCharMeet } from "../../services/api";
+import { deleteCharMeet, insertCharMeet } from "../../services/api";
 import { translate } from "../../translate";
 import { CharDatabase } from "../../types/database/Char";
 import { MeetDatabase } from "../../types/database/Meet";
@@ -25,31 +25,53 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
 }) => {
   const router = useRouter();
 
-  console.log(meet?.id);
+  const handleDeleteCharToMeet = async () => {
+    if (char.id && meet) {
+      const res = await deleteCharMeet(char.id, meet.id);
+
+      res.status === 300
+        ? Swal.fire({
+            title: translate()["ops!"],
+            text: translate().error,
+            icon: "error",
+            confirmButtonText: "Confimar",
+          }).then(() => {
+            router.reload();
+          })
+        : Swal.fire({
+            title: translate()["Greate!"],
+            text: translate()["Your char was deleted on meet"],
+            icon: "success",
+            confirmButtonText: "Confimar",
+          }).then(() => {
+            router.reload();
+          });
+    }
+  };
 
   const handleAddCharToMeet = async () => {
     try {
       if (meet && char.id) {
-        const res = await joinCharMeet(char.id, meet.id);
+        await insertCharMeet(char.id, meet.id);
 
-        // Swal.fire({
-        //   title: translate()["Greate!"],
-        //   text: translate()["Your char was add on meet"],
-        //   icon: "success",
-        //   confirmButtonText: "Confimar",
-        // }).then(() => {
-        //   router.reload();
-        // });
+        Swal.fire({
+          title: translate()["Greate!"],
+          text: translate()["Your char was add on meet"],
+          icon: "success",
+          confirmButtonText: "Confimar",
+        }).then(() => {
+          router.reload();
+        });
       }
     } catch (error) {
-      // Swal.fire({
-      //   title: translate()["ops!"],
-      //   text: `${error}`,
-      //   icon: "error",
-      //   confirmButtonText: "Confimar",
-      // }).then(() => {
-      //   router.reload();
-      // });
+      Swal.fire({
+        title: translate()["ops!"],
+        text: `${error}`,
+        icon: "error",
+        confirmButtonText: "Confimar",
+      }).then(() => {
+        router.reload();
+      });
     }
   };
 
@@ -95,7 +117,7 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
                 className="mt-4"
                 size="sm"
                 variant="danger"
-                onClick={() => console.log("Work in progress")}
+                onClick={() => handleDeleteCharToMeet()}
               >
                 Abandonar encontro
               </Button>
