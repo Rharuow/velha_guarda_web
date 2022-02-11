@@ -90,9 +90,7 @@ const createSession = async (email: string, password: string) => {
   }
 };
 
-const getCurrentUserByToken: () => Promise<
-  AxiosResponse<any, any>
-> = async () => {
+const getCurrentUserByToken = async () => {
   try {
     const authorization = await setToken();
     const res = await api.get("/session", authorization);
@@ -104,7 +102,7 @@ const getCurrentUserByToken: () => Promise<
   }
 };
 
-const getEvents: () => Promise<AxiosResponse<any, any>> = async () => {
+const getEvents = async () => {
   try {
     const authorization = await setToken();
 
@@ -116,9 +114,7 @@ const getEvents: () => Promise<AxiosResponse<any, any>> = async () => {
   }
 };
 
-const getEvent: (id: string) => Promise<AxiosResponse<any, any>> = async (
-  id
-) => {
+const getEvent = async (id: string) => {
   try {
     const authorization = await setToken();
 
@@ -132,12 +128,9 @@ const getEvent: (id: string) => Promise<AxiosResponse<any, any>> = async (
   }
 };
 
-const createEvent: (
-  data: EventDatabase
-) => Promise<AxiosResponse<any, any>> = async (data) => {
+const createEvent = async (data: EventDatabase) => {
   try {
     const authorization = await setToken();
-
     return await api.post("/events", data, authorization);
   } catch (error) {
     console.log("get events error = ", error);
@@ -145,9 +138,7 @@ const createEvent: (
   }
 };
 
-const createMeet: (
-  data: CreateMeetDatabase
-) => Promise<AxiosResponse<any, any>> = async (data) => {
+const createMeet = async (data: CreateMeetDatabase) => {
   try {
     const authorization = await setToken();
 
@@ -158,9 +149,7 @@ const createMeet: (
   }
 };
 
-const getCharMeetings: (
-  charId: string
-) => Promise<AxiosResponse<any, any>> = async (charId) => {
+const getCharMeetings = async (charId: string) => {
   try {
     const authorization = await setToken();
 
@@ -172,7 +161,7 @@ const getCharMeetings: (
   }
 };
 
-const getMeetings: () => Promise<AxiosResponse<any, any>> = async () => {
+const getMeetings = async () => {
   try {
     const authorization = await setToken();
 
@@ -184,9 +173,7 @@ const getMeetings: () => Promise<AxiosResponse<any, any>> = async () => {
   }
 };
 
-const getMeetChars: (
-  meetId: string
-) => Promise<AxiosResponse<any, any>> = async (meetId) => {
+const getMeetChars = async (meetId: string) => {
   try {
     const authorization = await setToken();
 
@@ -198,13 +185,7 @@ const getMeetChars: (
   }
 };
 
-const insertCharMeet: (
-  charId: string,
-  meetId: string
-) => Promise<AxiosResponse<any, any>> = async (
-  charId: string,
-  meetId: string
-) => {
+const insertCharMeet = async (charId: string, meetId: string) => {
   try {
     const authorization = await setToken();
     return await api.put(
@@ -217,13 +198,7 @@ const insertCharMeet: (
   }
 };
 
-const deleteCharMeet: (
-  charId: string,
-  meetId: string
-) => Promise<AxiosResponse<any, any>> = async (
-  charId: string,
-  meetId: string
-) => {
+const deleteCharMeet = async (charId: string, meetId: string) => {
   try {
     const authorization = await setToken();
     return await api.delete(
@@ -235,9 +210,7 @@ const deleteCharMeet: (
   }
 };
 
-const deleteMeet: (meetId: string) => Promise<AxiosResponse<any, any>> = async (
-  meetId: string
-) => {
+const deleteMeet = async (meetId: string) => {
   try {
     const authorization = await setToken();
     return await api.delete(`/meetings/${meetId}`, authorization);
