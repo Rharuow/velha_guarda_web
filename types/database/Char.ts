@@ -5,6 +5,21 @@ export type CharRegistration = {
   admin: boolean;
 };
 
+export type CharSex = "m" | "f";
+
+export type CharVoc = "ms" | "ek" | "ed" | "rp";
+
+export interface CharUpdateParamsDatabase {
+  name: string;
+  lvl: number;
+  online: boolean;
+  premium: boolean;
+  residence: string;
+  max_shared_lvl: number;
+  min_shared_lvl: number;
+  sex: CharSex;
+}
+
 export type CharDatabase = {
   id?: string;
   name: string;
@@ -14,8 +29,8 @@ export type CharDatabase = {
   online: boolean;
   premium: boolean;
   residence: string;
-  sex: "m" | "f";
-  voc: "ms" | "ek" | "ed" | "rp";
+  sex: CharSex;
+  voc: CharVoc;
   user_id?: string;
   user?: User;
 };

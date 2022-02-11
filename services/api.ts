@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { getSession } from "next-auth/react";
+import { CharUpdateParamsDatabase } from "../types/database/Char";
 import { EventDatabase } from "../types/database/Event";
 import { CreateMeetDatabase } from "../types/database/Meet";
 import { CreateUser } from "../types/database/User";
@@ -11,13 +12,13 @@ const api = axios.create({
   },
 });
 
-const setError = (message: string) => {
+export const setError = (message: string) => {
   return {
     config: {},
     data: {},
     headers: {},
     status: 300,
-    statusText: message,
+    statusText: `unauthorized: ${message}`,
   };
 };
 
@@ -47,6 +48,15 @@ const getChar = async (id: string) => {
     console.log("get char error = ", error);
 
     return setError(`get char error = ${error}`);
+  }
+};
+
+const updateChar = async (id: string, char: CharUpdateParamsDatabase) => {
+  try {
+    const authorization = await setToken();
+    return await api.put(`/chars/${id}`, char, authorization);
+  } catch (error) {
+    throw new Error(`update Char = ${error}`);
   }
 };
 
@@ -241,6 +251,7 @@ export {
   deleteCharMeet,
   getChars,
   getChar,
+  updateChar,
   getCharMeetings,
   getCurrentUserByToken,
   getMeetChars,

@@ -1,4 +1,4 @@
-export type Guild = {
+export interface Guild {
   guild: {
     data: {
       name: string;
@@ -25,9 +25,9 @@ export type Guild = {
     };
     members: Array<Member>;
     invited: Array<any>;
-    error: string
+    error: string;
   };
-};
+}
 
 export type Member = {
   rank_title: string;
