@@ -34,42 +34,76 @@ const getChars: () => Promise<AxiosResponse<any, any>> = async () => {
   try {
     return await api.get("/chars");
   } catch (error) {
-    console.log("get session error = ", error);
-    return setError(`get session error = ${error}`);
+    console.log("get chars error = ", error);
+    return setError(`get chars error = ${error}`);
   }
 };
 
 const getChar = async (id: string) => {
-  const authorization = await setToken();
-  return await api.get(`/chars/${id}`, authorization);
+  try {
+    const authorization = await setToken();
+    return await api.get(`/chars/${id}`, authorization);
+  } catch (error) {
+    console.log("get char error = ", error);
+
+    return setError(`get char error = ${error}`);
+  }
 };
 
-const createUser = async (data: CreateUser) => await api.post("/users", data);
+const createUser = async (data: CreateUser) => {
+  try {
+    return await api.post("/users", data);
+  } catch (error) {
+    console.log("create user error = ", error);
 
-const confirmationUser = async (token: string, email: string) =>
-  await api.get(`/users/confirmation/${email}/${token}`);
+    return setError(`create user error = ${error}`);
+  }
+};
 
-const createSession = async (email: string, password: string) =>
-  await api.post("/session", { email, password });
+const confirmationUser = async (token: string, email: string) => {
+  try {
+    return await api.get(`/users/confirmation/${email}/${token}`);
+  } catch (error) {
+    console.log("confirmation user error = ", error);
+
+    return setError(`confirmation user error = ${error}`);
+  }
+};
+
+const createSession = async (email: string, password: string) => {
+  try {
+    return await api.post("/session", { email, password });
+  } catch (error) {
+    console.log("create session error = ", error);
+
+    return setError(`create session error = ${error}`);
+  }
+};
 
 const getCurrentUserByToken: () => Promise<
   AxiosResponse<any, any>
 > = async () => {
-  const authorization = await setToken();
   try {
+    const authorization = await setToken();
     const res = await api.get("/session", authorization);
     return res;
   } catch (error) {
-    console.log("get session error = ", error);
+    console.log("get current user by token error = ", error);
 
-    return setError(`get session error = ${error}`);
+    return setError(`get current user by token error = ${error}`);
   }
 };
 
 const getEvents: () => Promise<AxiosResponse<any, any>> = async () => {
-  const authorization = await setToken();
+  try {
+    const authorization = await setToken();
 
-  return await api.get("/events", authorization);
+    return await api.get("/events", authorization);
+  } catch (error) {
+    console.log("get events error = ", error);
+
+    return setError(`get events error = ${error}`);
+  }
 };
 
 const getEvent: (id: string) => Promise<AxiosResponse<any, any>> = async (
@@ -82,6 +116,8 @@ const getEvent: (id: string) => Promise<AxiosResponse<any, any>> = async (
 
     return res;
   } catch (error) {
+    console.log("get event error = ", error);
+
     return setError(`get event error = ${error}`);
   }
 };
@@ -89,17 +125,27 @@ const getEvent: (id: string) => Promise<AxiosResponse<any, any>> = async (
 const createEvent: (
   data: EventDatabase
 ) => Promise<AxiosResponse<any, any>> = async (data) => {
-  const authorization = await setToken();
+  try {
+    const authorization = await setToken();
 
-  return await api.post("/events", data, authorization);
+    return await api.post("/events", data, authorization);
+  } catch (error) {
+    console.log("get events error = ", error);
+    return setError(`get events error = ${error}`);
+  }
 };
 
 const createMeet: (
   data: CreateMeetDatabase
 ) => Promise<AxiosResponse<any, any>> = async (data) => {
-  const authorization = await setToken();
+  try {
+    const authorization = await setToken();
 
-  return await api.post("/meetings", data, authorization);
+    return await api.post("/meetings", data, authorization);
+  } catch (error) {
+    console.log(`create meet error =  ${error}`);
+    return setError(`create meet error =  ${error}`);
+  }
 };
 
 const getCharMeetings: (
@@ -115,6 +161,7 @@ const getCharMeetings: (
     return setError(`get char meetings= ${error}`);
   }
 };
+
 const getMeetings: () => Promise<AxiosResponse<any, any>> = async () => {
   try {
     const authorization = await setToken();
