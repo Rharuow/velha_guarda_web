@@ -10,6 +10,8 @@ export const translate = (language = "pt-BR") => {
         "U did make something wrong": "Você fez algo de errado!",
         "There is someting bad on CIP sever":
           "Há algo de errado com servidor da CIP!",
+        "There is someting something worng with CIP API. Please try again":
+          "Há algo de errado com a API da CIP. Por favor tente novamente",
         "Greate!": "Parabens!",
         "Registrations was successfully": "Cadastro feita com sucesso!",
         "Request failed with status code 401": "Requisição não autorizada!",
