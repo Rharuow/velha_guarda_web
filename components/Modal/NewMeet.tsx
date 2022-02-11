@@ -5,7 +5,12 @@ import Modal from "react-modal";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 
-import { createEvent, createMeet, getEvent } from "../../services/api";
+import {
+  createEvent,
+  createMeet,
+  deleteEvent,
+  getEvent,
+} from "../../services/api";
 import { translate } from "../../translate";
 import { useRouter } from "next/router";
 import {
@@ -14,6 +19,7 @@ import {
 } from "../../types/database/Meet";
 import { CharDatabase } from "../../types/database/Char";
 import { EventDatabase } from "../../types/database/Event";
+import { useCurrentUserContext } from "../Page/Application";
 
 export type PropsNewMeet = {
   modalIsOpen: boolean;
@@ -37,6 +43,8 @@ const NewMeet: React.FC<PropsNewMeet> = ({
   const { register, handleSubmit } = useForm<CreateMeetDatabase>();
 
   const [event, setEvent] = useState<EventDatabase>();
+
+  const currentUser = useCurrentUserContext();
 
   const router = useRouter();
 
@@ -74,6 +82,23 @@ const NewMeet: React.FC<PropsNewMeet> = ({
     });
     setLoading(false);
     closeModal();
+  };
+
+  const handleDeleteEvent = async (id: string) => {
+    const res = await deleteEvent(id);
+
+    if (res.status === 300)
+      return Swal.fire({
+        title: translate()["ops!"],
+        text: translate()["error"],
+        icon: "info",
+      }).then(() => router.reload());
+
+    return Swal.fire({
+      title: translate()["Greate!"],
+      text: translate()["Event was deleted"],
+      icon: "success",
+    }).then(() => router.reload());
   };
 
   useEffect(() => {
@@ -129,6 +154,16 @@ const NewMeet: React.FC<PropsNewMeet> = ({
               <span className="fw-bold">Vocação:</span>
               <strong className="text-dark text-uppercase">{char.voc}</strong>
             </div>
+
+            {currentUser?.is_admin && (
+              <Button
+                variant="danger"
+                onClick={() => handleDeleteEvent(eventId)}
+                className="w-100"
+              >
+                Excluir Evento
+              </Button>
+            )}
 
             <Form onSubmit={handleSubmit(onSubmit)}>
               <Form.Group className="mb-3" controlId="name">

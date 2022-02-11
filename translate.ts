@@ -17,6 +17,7 @@ export const translate = (language = "pt-BR") => {
         "Request failed with status code 401": "Requisição não autorizada!",
         error: "Algo deu errado, desculpe!",
         "Event was registred": "O evento foi registrado com sucesso",
+        "Event was deleted": "O evento foi apagado com sucesso",
         "Meet was registred": "O encontro foi registrado com sucesso",
         "Your char was add on meet": "Seu Char foi adicionado ao encontro",
         "Your char was deleted on meet": "Seu Char foi retirado do encontro",

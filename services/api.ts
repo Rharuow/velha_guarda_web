@@ -138,6 +138,15 @@ const createEvent = async (data: EventDatabase) => {
   }
 };
 
+const deleteEvent = async (id: string) => {
+  try {
+    const authorization = await setToken();
+    return await api.delete(`/events/${id}`, authorization);
+  } catch (error) {
+    return setError(`delete meet = ${error}`);
+  }
+};
+
 const createMeet = async (data: CreateMeetDatabase) => {
   try {
     const authorization = await setToken();
@@ -231,6 +240,7 @@ export {
   getMeetings,
   deleteMeet,
   getEvents,
+  deleteEvent,
   getEvent,
   createMeet,
   createEvent,
