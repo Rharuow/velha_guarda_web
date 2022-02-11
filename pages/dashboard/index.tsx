@@ -11,14 +11,21 @@ import Event from "../../components/Cards/Event";
 import New from "../../components/Cards/New";
 import { EventDatabase } from "../../types/database/Event";
 import { getChar, getChars, getEvents, getMeetings } from "../../services/api";
+import { getChar as getCharCipApi } from "../../services/charApi";
 import NewEvent from "../../components/Modal/NewEvent";
 import NewMeet from "../../components/Modal/NewMeet";
 import { MeetDatabase } from "../../types/database/Meet";
 import Meet from "../../components/Cards/Meet";
 import ShowMeet from "../../components/Modal/ShowMeet";
+import { serializeChar } from "../../util/serializerChar";
+import { handleUpdateChar } from "../../util/updateChar";
+import Swal from "sweetalert2";
+import { translate } from "../../translate";
+import { useRouter } from "next/router";
 
-const Home: React.FC = () => {
+const Dashboard: React.FC = () => {
   const currentUser = useCurrentUserContext();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [chars, setChars] = useState<Array<CharDatabase>>();
   const [char, setChar] = useState<CharDatabase>();
@@ -35,17 +42,27 @@ const Home: React.FC = () => {
   });
 
   const handleCharProfile = async (id: string) => {
-    try {
-      const tempChar = (await getChar(id)).data.record;
-      setChar(tempChar);
-
-      const tempChars = (await getChars()).data.record.filter(
-        (char: CharDatabase) => char.name !== tempChar.name
-      );
-
-      setChars(tempChars);
-    } catch (error) {
-      console.log(`handleCharProfile Error = ${error}`);
+    setLoading(true);
+    const tempChar = currentUser?.chars?.find((char) => char.id === id);
+    if (tempChar) {
+      const charCipApi = await getCharCipApi(tempChar.name);
+      const charSerialized = serializeChar(charCipApi);
+      try {
+        const wasUpdated = await handleUpdateChar(tempChar, charSerialized);
+        const tempChars = currentUser?.chars?.filter(
+          (char) => char.id !== tempChar?.id
+        );
+        console.log(wasUpdated);
+        setChar(wasUpdated ? charSerialized : tempChar);
+        setChars(tempChars);
+        setLoading(false);
+      } catch (error) {
+        Swal.fire({
+          title: translate()["error"],
+          icon: "info",
+          confirmButtonText: "Ok",
+        }).then(() => router.reload());
+      }
     }
   };
 
@@ -65,7 +82,6 @@ const Home: React.FC = () => {
 
     const charMeetings = async () => {
       const tempMeeting = await getMeetings();
-      console.log(tempMeeting);
       setMeetings(tempMeeting?.data.record);
     };
 
@@ -206,4 +222,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Dashboard;
