@@ -22,6 +22,7 @@ import { handleUpdateChar } from "../../util/updateChar";
 import Swal from "sweetalert2";
 import { translate } from "../../translate";
 import { useRouter } from "next/router";
+import { Card } from "react-bootstrap";
 
 const Dashboard: React.FC = () => {
   const currentUser = useCurrentUserContext();
@@ -135,69 +136,82 @@ const Dashboard: React.FC = () => {
           <div className="mb-4">
             <CharDetailed {...char} />
           </div>
-          <div className="mb-4 w-100">
-            <Slider {...settings}>
-              {currentUser?.is_admin && (
-                <div key={char.name} className="px-2 ">
-                  <New
-                    title="Evento"
-                    onClick={() => {
-                      setModal({
-                        ...modal,
-                        newEvent: { isOpen: !modal.newEvent.isOpen },
-                      });
-                    }}
-                  />
-                </div>
-              )}
-              {events &&
-                events.length > 0 &&
-                events.map((ev) => (
-                  <div
-                    key={ev.name}
-                    className="px-2 "
-                    onClick={() => {
-                      setModal({
-                        ...modal,
-                        newMeet: { isOpen: true, event: ev.id ? ev.id : "" },
-                      });
-                    }}
-                  >
-                    <Event {...ev} />
-                  </div>
-                ))}
-            </Slider>
-          </div>
-          <div className="mb-4 w-100">
-            <Slider {...settings}>
-              {meetings &&
-                meetings.length > 0 &&
-                meetings.map((meet) => (
-                  <div
-                    key={meet.event.name}
-                    className="px-2 "
-                    onClick={() => {
-                      setModal({
-                        ...modal,
-                        showMeet: {
-                          isOpen: true,
-                          meet,
-                        },
-                      });
-                    }}
-                  >
-                    <Meet
-                      event={meet.event}
-                      id={meet.id}
-                      start_at={`${meet.start_at}`}
-                      location={
-                        meet.location ? meet.location : "Sem local marcado"
-                      }
+          {/* Eventos */}
+          <Card className="mb-4 w-100">
+            <Card.Header>
+              <p className="text-center fw-bold">Eventos</p>
+            </Card.Header>
+            <Card.Body>
+              <Slider {...settings}>
+                {currentUser?.is_admin && (
+                  <div key={char.name} className="px-2 ">
+                    <New
+                      title="Evento"
+                      onClick={() => {
+                        setModal({
+                          ...modal,
+                          newEvent: { isOpen: !modal.newEvent.isOpen },
+                        });
+                      }}
                     />
                   </div>
-                ))}
-            </Slider>
-          </div>
+                )}
+                {events &&
+                  events.length > 0 &&
+                  events.map((ev) => (
+                    <div
+                      key={ev.name}
+                      className="px-2 "
+                      onClick={() => {
+                        setModal({
+                          ...modal,
+                          newMeet: { isOpen: true, event: ev.id ? ev.id : "" },
+                        });
+                      }}
+                    >
+                      <Event {...ev} />
+                    </div>
+                  ))}
+              </Slider>
+            </Card.Body>
+          </Card>
+
+          {/* Encontros */}
+          {meetings && meetings.length > 0 && (
+            <Card className="mb-4 w-100">
+              <Card.Header>
+                <p className="text-center fw-bold">Encontros</p>
+              </Card.Header>
+              <Card.Body>
+                <Slider {...settings}>
+                  {meetings.map((meet) => (
+                    <div
+                      key={meet.event.name}
+                      className="px-2 "
+                      onClick={() => {
+                        setModal({
+                          ...modal,
+                          showMeet: {
+                            isOpen: true,
+                            meet,
+                          },
+                        });
+                      }}
+                    >
+                      <Meet
+                        event={meet.event}
+                        id={meet.id}
+                        start_at={`${meet.start_at}`}
+                        location={
+                          meet.location ? meet.location : "Sem local marcado"
+                        }
+                      />
+                    </div>
+                  ))}
+                </Slider>
+              </Card.Body>
+            </Card>
+          )}
 
           <div className="mb-4 w-100">
             <Slider {...settings} className="h-100">
