@@ -49,7 +49,8 @@ const Signup: React.FC = () => {
     const recoverGuildData = async () => {
       const guildData = await getGuild();
       if (guildData) {
-        const charsRegistred = (await getChars()).record as Array<CharDatabase>;
+        const charsRegistred = (await getChars()).data
+          .record as Array<CharDatabase>;
         const charsNameRegistred = charsRegistred.map((char) => char.name);
         setGuild(guildData);
         let members: Array<CharRegistration> = [];

@@ -30,9 +30,13 @@ const setToken = async () => {
   return {};
 };
 
-const getChars = async () => {
-  const authorization = await setToken();
-  return await api.get("/chars", authorization);
+const getChars: () => Promise<AxiosResponse<any, any>> = async () => {
+  try {
+    return await api.get("/chars");
+  } catch (error) {
+    console.log("get session error = ", error);
+    return setError(`get session error = ${error}`);
+  }
 };
 
 const getChar = async (id: string) => {
