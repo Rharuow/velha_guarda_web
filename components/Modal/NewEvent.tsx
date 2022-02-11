@@ -35,7 +35,6 @@ const NewEvent: React.FC<PropsNewEvent> = ({
     min_chars,
   }: EventDatabase) => {
     setLoading(true);
-
     const dataFormatted: EventDatabase = {
       cooldown,
       name,
@@ -48,9 +47,12 @@ const NewEvent: React.FC<PropsNewEvent> = ({
     const res = await createEvent(dataFormatted);
 
     Swal.fire({
-      title: translate()["Greate!"],
-      text: translate()["Event was registred"],
-      icon: "success",
+      title: res.status !== 300 ? translate()["Greate!"] : translate()["ops!"],
+      text:
+        res.status !== 300
+          ? translate()["Event was registred"]
+          : translate()["error"],
+      icon: res.status !== 300 ? "success" : "info",
       confirmButtonText: "Confimar",
     }).then(() => {
       router.reload();
@@ -143,6 +145,7 @@ const NewEvent: React.FC<PropsNewEvent> = ({
                 <Form.Control
                   type="number"
                   min="1"
+                  max="10000"
                   placeholder="Ex: 1"
                   {...register("lvl_min")}
                 />
