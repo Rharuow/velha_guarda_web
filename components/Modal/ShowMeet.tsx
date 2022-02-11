@@ -31,8 +31,6 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
 
   const currentUser = useCurrentUserContext();
 
-  console.log(userAlreadyAtMeet);
-
   const handleDeleteCharToMeet = async () => {
     if (char.id && meet) {
       const res = await deleteCharMeet(char.id, meet.id);
