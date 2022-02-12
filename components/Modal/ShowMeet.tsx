@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 import Modal from "react-modal";
 import Swal from "sweetalert2";
 import { deleteCharMeet, deleteMeet, insertCharMeet } from "../../services/api";
@@ -104,12 +104,15 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
   };
 
   useEffect(() => {
-    if (meet?.chars)
+    if (meet?.chars) {
       setUserAlreadyAtMeet(
-        _.differenceBy(currentUser?.chars, meet?.chars, "name").length !==
-          currentUser?.chars?.length
+        meet.chars.some(
+          (meetChar) =>
+            meetChar.user_id === currentUser?.id && char.id !== meetChar.id
+        )
       );
-  }, [currentUser?.chars, meet?.chars]);
+    }
+  }, [char.id, currentUser?.chars, currentUser?.id, meet?.chars]);
 
   return (
     <Modal isOpen={isOpen}>
@@ -157,17 +160,19 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
             >
               Abandonar encontro
             </Button>
+          ) : char.id === meet.char_id ? (
+            <Button
+              className="mt-4"
+              size="sm"
+              variant="danger"
+              onClick={() => handleDeleteToMeet()}
+            >
+              Remove Encontro
+            </Button>
           ) : (
-            char.id === meet.char_id && (
-              <Button
-                className="mt-4"
-                size="sm"
-                variant="danger"
-                onClick={() => handleDeleteToMeet()}
-              >
-                Remove Encontro
-              </Button>
-            )
+            <Alert variant="info" className="mt-3">
+              Você ja possui um Char nesse encontro
+            </Alert>
           )}
         </div>
       )}
