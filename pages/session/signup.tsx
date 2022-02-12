@@ -104,7 +104,8 @@ const Signup: React.FC = () => {
         for (const char of charsApi?.other_characters) {
           if (char.world.includes("Pacera") && data.char !== char.name) {
             charsApi = await getChar(char.name);
-            charsParams.push(serializeChar(charsApi));
+            if (!charsApi.data.vocation.includes("None"))
+              charsParams.push(serializeChar(charsApi));
           }
         }
 
