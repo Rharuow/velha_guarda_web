@@ -19,7 +19,7 @@ const Login: React.FC = () => {
     console.log(`${process.env.NEXT_PUBLIC_SITE}/dashboard`);
     signIn("login", {
       ...data,
-      callbackUrl: `${process.env.NEXT_PUBLIC_SITE}/dashboard`,
+      // callbackUrl: `${process.env.NEXT_PUBLIC_SITE}/dashboard`,
     });
   };
 
