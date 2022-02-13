@@ -73,7 +73,16 @@ const Signup: React.FC = () => {
           setChars(members);
           setLoading(false);
         } catch (error) {
-          recoverGuildData();
+          Swal.fire({
+            title: translate()["ops!"],
+            text: translate()[
+              "There is someting something worng with CIP API. Please try again"
+            ],
+            icon: "info",
+            confirmButtonText: "Ok",
+          }).then(async () => {
+            router.reload();
+          });
         }
       }
       if (guildData.guild.error) recoverGuildData();
