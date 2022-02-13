@@ -36,10 +36,10 @@ export default NextAuth({
         if (credentials?.email === "" || credentials?.password) {
           const email = credentials.email;
           const password = credentials.password;
-
           const token = (await createSession(email, password)).data.token;
 
-          return { token };
+          if (token) return { token };
+          return null;
         }
         return Promise.reject(new Error("Missing params"));
       },

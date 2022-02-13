@@ -16,6 +16,7 @@ export const translate = (language = "pt-BR") => {
         "Registrations was successfully": "Cadastro feita com sucesso!",
         "Request failed with status code 401": "Requisição não autorizada!",
         error: "Algo deu errado, desculpe!",
+        "Password or email incorrects": "Senha ou email incorretos",
         "Event was registred": "O evento foi registrado com sucesso",
         "Event was deleted": "O evento foi apagado com sucesso",
         "Meet was registred": "O encontro foi registrado com sucesso",

@@ -53,7 +53,6 @@ const Dashboard: React.FC = () => {
         const tempChars = currentUser?.chars?.filter(
           (char) => char.id !== tempChar?.id
         );
-        console.log(wasUpdated);
         setChar(wasUpdated ? charSerialized : tempChar);
         setChars(tempChars);
         setLoading(false);

@@ -5,6 +5,9 @@ import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 
 import { LoginUser } from "../../types/database/User";
+import Swal from "sweetalert2";
+import { translate } from "../../translate";
+import { useRouter } from "next/router";
 
 export type FormLoginUser = {
   email: string;
@@ -15,12 +18,39 @@ export type FormLoginUser = {
 const Login: React.FC = () => {
   const { register, handleSubmit, setValue } = useForm<FormLoginUser>();
 
+  const router = useRouter();
+
+  // .then(async (res) => {
+  //     if (res?.error) {
+  //       return Swal.fire({
+  //         title: translate()["ops!"],
+  //         text: translate()["Password or email incorrects"],
+  //         icon: "warning",
+  //       }).then(() => router.reload());
+  //     }
+  //     return router.push("/dashboard");
+  //   });
+
   const onSubmit = async (data: LoginUser) => {
-    // console.log(`${process.env.NEXT_PUBLIC_SITE}/dashboard`);
-    signIn("login", {
+    const res = (await signIn("login", {
       ...data,
-      callbackUrl: `${process.env.NEXT_PUBLIC_SITE}/dashboard`,
-    });
+      redirect: false,
+    })) as
+      | {
+          error: string | undefined;
+          status: number;
+          ok: boolean;
+          url: string | null;
+        }
+      | undefined;
+    if (res?.error) {
+      return Swal.fire({
+        title: translate()["ops!"],
+        text: translate()["Password or email incorrects"],
+        icon: "warning",
+      }).then(() => router.reload());
+    }
+    return router.push("/dashboard");
   };
 
   useEffect(() => {
