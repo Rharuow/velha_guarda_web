@@ -16,10 +16,10 @@ const Login: React.FC = () => {
   const { register, handleSubmit, setValue } = useForm<FormLoginUser>();
 
   const onSubmit = async (data: LoginUser) => {
-    console.log(`${process.env.NEXT_PUBLIC_SITE}/dashboard`);
+    // console.log(`${process.env.NEXT_PUBLIC_SITE}/dashboard`);
     signIn("login", {
       ...data,
-      // callbackUrl: `${process.env.NEXT_PUBLIC_SITE}/dashboard`,
+      callbackUrl: `${process.env.NEXT_PUBLIC_SITE}/dashboard`,
     });
   };
 
