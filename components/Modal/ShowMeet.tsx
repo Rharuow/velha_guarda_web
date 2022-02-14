@@ -114,6 +114,8 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
     }
   }, [char.id, currentUser?.chars, currentUser?.id, meet?.chars]);
 
+  console.log(meet?.event.max_chars);
+
   return (
     <Modal isOpen={isOpen}>
       <div className="d-flex flex-row-reverse w-100 mb-2 align-self-start">
@@ -173,9 +175,16 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
             >
               Remove Encontro
             </Button>
-          ) : meet.available ? (
+          ) : meet.event.max_chars &&
+            meet.available &&
+            meet.chars.length < meet.event.max_chars ? (
             <Alert variant="info" className="mt-3">
               Você ja possui um Char nesse encontro
+            </Alert>
+          ) : meet.event.max_chars &&
+            meet.event.max_chars === meet.chars.length ? (
+            <Alert variant="info" className="mt-3">
+              Esse encontro já encheu
             </Alert>
           ) : (
             <Alert variant="info" className="mt-3">

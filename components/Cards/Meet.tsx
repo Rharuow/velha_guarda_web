@@ -40,8 +40,6 @@ const Meet: React.FC<PropsMeet> = ({
     recoverPartners();
   }, [id]);
 
-  console.log("MEET MODAL = ", available);
-
   return (
     <Card className={`${className ? className : ""}`}>
       <Card.Header className={`${available ? "bg-success" : "bg-danger"}`}>
