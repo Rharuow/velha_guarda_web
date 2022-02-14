@@ -9,7 +9,7 @@ export const serializeChar: (char: Char) => CharDatabase = (char: Char) => ({
   online: char.data.status.includes("offline") ? false : true,
   premium: char.data.account_status.includes("Premium Account") ? true : false,
   residence: char.data.residence,
-  sex: char.data.sex.includes("male") ? "m" : "f",
+  sex: char.data.sex === "male" ? "m" : "f",
   voc: char.data.vocation.includes("Knight")
     ? "ek"
     : char.data.vocation.includes("Sorcerer")
