@@ -30,7 +30,9 @@ const Event: React.FC<PropsEvent> = ({
           <p className="fw-bold">cooldown: {cooldownText}</p>
         </div>
         <div className="bg-lightgray px-1">
-          <p className="fw-bold">level Máx: {lvl_max}</p>
+          <p className="fw-bold">
+            level Máx: {lvl_max === 10000 ? lvl_max : "Não possui"}
+          </p>
         </div>
         <div className="bg-secondary px-1">
           <p className="fw-bold">level Min: {lvl_min}</p>
