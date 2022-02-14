@@ -52,13 +52,13 @@ const CharDetailed: React.FC<PropsCharDetailed> = ({
           </p>
         </div>
         <div className="d-flex justify-content-between flex-wrap rounded px-2">
-          <span className="fw-bold">Premiun:</span>
+          <span className="fw-bold">Premium:</span>
           <span className={`text-${premium ? "success" : "danger"} fw-bold`}>
             {premium ? "Sim" : "Não"}
           </span>
         </div>
         <div className="d-flex justify-content-between bg-secondary rounded px-2">
-          <span className="text-white fw-bold">Residencia:</span>
+          <span className="text-white fw-bold">Residência:</span>
           <p className="text-white fw-bold">{residence}</p>
         </div>
       </Card.Body>
