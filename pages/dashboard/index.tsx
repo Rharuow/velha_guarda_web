@@ -42,27 +42,31 @@ const Dashboard: React.FC = () => {
     showMeet: { isOpen: false, meet: null },
   });
 
+  const updateCharInfo = async (tempChar: CharDatabase) => {
+    const charCipApi = await getCharCipApi(tempChar.name);
+    const charSerialized = serializeChar(charCipApi);
+    try {
+      const wasUpdated = await handleUpdateChar(tempChar, charSerialized);
+      const tempChars = currentUser?.chars?.filter(
+        (char) => char.id !== tempChar?.id
+      );
+      setChar(wasUpdated ? charSerialized : tempChar);
+      setChars(tempChars);
+      setLoading(false);
+    } catch (error) {
+      Swal.fire({
+        title: translate()["error"],
+        icon: "info",
+        confirmButtonText: "Ok",
+      }).then(() => router.reload());
+    }
+  };
+
   const handleCharProfile = async (id: string) => {
     setLoading(true);
     const tempChar = currentUser?.chars?.find((char) => char.id === id);
     if (tempChar) {
-      const charCipApi = await getCharCipApi(tempChar.name);
-      const charSerialized = serializeChar(charCipApi);
-      try {
-        const wasUpdated = await handleUpdateChar(tempChar, charSerialized);
-        const tempChars = currentUser?.chars?.filter(
-          (char) => char.id !== tempChar?.id
-        );
-        setChar(wasUpdated ? charSerialized : tempChar);
-        setChars(tempChars);
-        setLoading(false);
-      } catch (error) {
-        Swal.fire({
-          title: translate()["error"],
-          icon: "info",
-          confirmButtonText: "Ok",
-        }).then(() => router.reload());
-      }
+      await updateCharInfo(tempChar);
     }
   };
 
@@ -85,8 +89,12 @@ const Dashboard: React.FC = () => {
       setMeetings(tempMeeting?.data.record);
     };
 
+    const setUpdatedChar = async (char: CharDatabase) => {
+      updateCharInfo(char);
+    };
+
     if (currentUser && currentUser !== null && currentUser.chars) {
-      setChar(currentUser.chars[0]);
+      setUpdatedChar(currentUser.chars[0]);
       setChars(
         currentUser.chars.filter((c, index, self) => c.name !== self[0].name)
       );
@@ -94,6 +102,7 @@ const Dashboard: React.FC = () => {
       charMeetings();
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   return (

@@ -17,8 +17,10 @@ export type ErrorAPI = {
 
 const getChar: (name: string) => Promise<Char> = async (name: string) => {
   try {
-    return (await charApi.get(`/characters/${name}.json`)).data
+    const char = (await charApi.get(`/characters/${name}.json`)).data
       .characters as Char;
+    console.log("CHAR BY CIP API = ", char);
+    return char;
   } catch (error) {
     throw new Error(`error = ${error}`);
   }
