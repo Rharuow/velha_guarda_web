@@ -10,7 +10,13 @@ import { CharDatabase } from "../../types/database/Char";
 import Event from "../../components/Cards/Event";
 import New from "../../components/Cards/New";
 import { EventDatabase } from "../../types/database/Event";
-import { getChar, getChars, getEvents, getMeetings } from "../../services/api";
+import {
+  availableMeet,
+  getChar,
+  getChars,
+  getEvents,
+  getMeetings,
+} from "../../services/api";
 import { getChar as getCharCipApi } from "../../services/charApi";
 import NewEvent from "../../components/Modal/NewEvent";
 import NewMeet from "../../components/Modal/NewMeet";
@@ -85,8 +91,16 @@ const Dashboard: React.FC = () => {
     };
 
     const charMeetings = async () => {
-      const tempMeeting = await getMeetings();
-      setMeetings(tempMeeting?.data.record);
+      const today = new Date();
+      let tempMeeting = (await getMeetings()).data
+        .record as Array<MeetDatabase>;
+
+      for (const meet of tempMeeting) {
+        if (new Date(tempMeeting[0].start_at) < today && meet.available)
+          console.log("AVAILABLE = ", await availableMeet(meet.id, false));
+      }
+
+      setMeetings(tempMeeting);
     };
 
     const setUpdatedChar = async (char: CharDatabase) => {
@@ -209,6 +223,7 @@ const Dashboard: React.FC = () => {
                       <Meet
                         event={meet.event}
                         id={meet.id}
+                        available={meet.available}
                         start_at={`${meet.start_at}`}
                         location={
                           meet.location ? meet.location : "Sem local marcado"

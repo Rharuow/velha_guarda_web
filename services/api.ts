@@ -194,6 +194,17 @@ const getMeetChars = async (meetId: string) => {
   }
 };
 
+const availableMeet = async (id: string, available: boolean) => {
+  try {
+    const authorization = await setToken();
+    const res = await api.put(`/meetings/${id}`, { available }, authorization);
+    return res;
+  } catch (error) {
+    console.log(`get meet chars error = ${error}`);
+    return setError(`get meet chars error = ${error}`);
+  }
+};
+
 const insertCharMeet = async (charId: string, meetId: string) => {
   try {
     const authorization = await setToken();
@@ -234,10 +245,11 @@ export {
   getChars,
   getChar,
   updateChar,
-  getCharMeetings,
   getCurrentUserByToken,
   getMeetChars,
+  getCharMeetings,
   getMeetings,
+  availableMeet,
   deleteMeet,
   getEvents,
   deleteEvent,

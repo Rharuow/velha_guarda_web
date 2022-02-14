@@ -31,7 +31,7 @@ const Event: React.FC<PropsEvent> = ({
         </div>
         <div className="bg-lightgray px-1">
           <p className="fw-bold">
-            level Máx: {lvl_max === 10000 ? lvl_max : "Não possui"}
+            level Máx: {lvl_max === 10000 ? "Não possui" : lvl_max}
           </p>
         </div>
         <div className="bg-secondary px-1">

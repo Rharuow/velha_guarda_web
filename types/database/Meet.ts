@@ -6,7 +6,7 @@ export type MeetDatabase = {
   start_at: Date | string;
   finished_at: Date | string;
   location: string;
-  avalible: boolean;
+  available: boolean;
   char_id: string;
   event: EventDatabase;
   event_id: string;

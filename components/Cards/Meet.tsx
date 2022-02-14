@@ -8,6 +8,7 @@ export type PropsMeet = {
   id: string;
   start_at: string;
   location?: string;
+  available: boolean;
   event: EventDatabase;
   className?: string;
 };
@@ -17,6 +18,7 @@ const Meet: React.FC<PropsMeet> = ({
   start_at,
   location,
   event,
+  available,
   className,
 }) => {
   const [partners, setPartners] = useState<Array<CharDatabase>>();
@@ -38,9 +40,11 @@ const Meet: React.FC<PropsMeet> = ({
     recoverPartners();
   }, [id]);
 
+  console.log("MEET MODAL = ", available);
+
   return (
     <Card className={`${className ? className : ""}`}>
-      <Card.Header>
+      <Card.Header className={`${available ? "bg-success" : "bg-danger"}`}>
         <p className="text-center">{event.name}</p>
       </Card.Header>
       <Card.Body className="p-1">

@@ -132,12 +132,14 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
           <Meet
             className="w-100"
             event={meet.event}
+            available={meet.available}
             id={meet.id}
             start_at={`${meet.start_at}`}
             location={meet.location}
           />
           {!meet?.chars.some((c) => char.name === c.name) &&
-          !userAlreadyAtMeet ? (
+          !userAlreadyAtMeet &&
+          meet.available ? (
             <>
               <span className="mb-3 fw-bold">Participar com esse char?</span>
               <Char {...char} />
@@ -151,7 +153,9 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
                 </Button>
               </div>
             </>
-          ) : char.id !== meet.char_id && !userAlreadyAtMeet ? (
+          ) : char.id !== meet.char_id &&
+            !userAlreadyAtMeet &&
+            meet.available ? (
             <Button
               className="mt-4"
               size="sm"
@@ -160,7 +164,7 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
             >
               Abandonar encontro
             </Button>
-          ) : char.id === meet.char_id ? (
+          ) : char.id === meet.char_id && meet.available ? (
             <Button
               className="mt-4"
               size="sm"
@@ -169,9 +173,13 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
             >
               Remove Encontro
             </Button>
-          ) : (
+          ) : meet.available ? (
             <Alert variant="info" className="mt-3">
               Você ja possui um Char nesse encontro
+            </Alert>
+          ) : (
+            <Alert variant="info" className="mt-3">
+              Esse encontro já passou
             </Alert>
           )}
         </div>
