@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import ReactLoading from "react-loading";
 import Slider from "react-slick";
+import { Button, Card } from "react-bootstrap";
+import { useRouter } from "next/router";
+import Swal from "sweetalert2";
 
 import CharDetailed from "../../components/Cards/CharDetailed";
 import Char from "../../components/Cards/Char";
@@ -19,10 +22,7 @@ import Meet from "../../components/Cards/Meet";
 import ShowMeet from "../../components/Modal/ShowMeet";
 import { serializeChar } from "../../util/serializerChar";
 import { handleUpdateChar } from "../../util/updateChar";
-import Swal from "sweetalert2";
 import { translate } from "../../translate";
-import { useRouter } from "next/router";
-import { Button, Card } from "react-bootstrap";
 
 const Dashboard: React.FC = () => {
   const currentUser = useCurrentUserContext();
@@ -42,6 +42,8 @@ const Dashboard: React.FC = () => {
     newMeet: { isOpen: false, event: "" },
     showMeet: { isOpen: false, meet: null },
   });
+
+  const [totalMeetings, setTotalMeetings] = useState<number>(0);
 
   const updateCharInfo = async (tempChar: CharDatabase) => {
     const charCipApi = await getCharCipApi(tempChar.name);
@@ -88,16 +90,17 @@ const Dashboard: React.FC = () => {
     const charMeetings = async () => {
       const today = new Date();
       let tempMeeting = meetings || [];
-      let comingMeetings = (await getMeetings(pageForMeetings)).data
-        .record as Array<MeetDatabase>;
+      let [comingMeetings, getTotalMeetings] = (
+        await getMeetings(pageForMeetings)
+      ).data.record as [Array<MeetDatabase>, number];
       tempMeeting = tempMeeting?.concat(comingMeetings);
 
-      console.log("comingMeetings = ", comingMeetings);
+      // for (const meet of tempMeeting) {
+      //   if (new Date(tempMeeting[0].start_at) < today && meet.available)
+      //     console.log("AVAILABLE = ", await availableMeet(meet.id, false));
+      // }
 
-      for (const meet of tempMeeting) {
-        if (new Date(tempMeeting[0].start_at) < today && meet.available)
-          console.log("AVAILABLE = ", await availableMeet(meet.id, false));
-      }
+      setTotalMeetings(getTotalMeetings);
 
       setPageForMeetings(pageForMeetings + 1);
 
@@ -219,23 +222,11 @@ const Dashboard: React.FC = () => {
                 <p className="text-center fw-bold">Encontros</p>
               </Card.Header>
               <Card.Body>
-                <Slider
-                  {...settings}
-                  onEdge={async () => {
-                    const newMeetings = await (
-                      await getMeetings(pageForMeetings)
-                    ).data.record;
-                    if (newMeetings.length > 0) {
-                      setMeetings([...meetings, ...newMeetings]);
-                      setPageForMeetings(pageForMeetings + 1);
-                      console.log(pageForMeetings);
-                    }
-                  }}
-                >
+                <Slider {...settings}>
                   {meetings.map((meet) => (
                     <div
                       key={meet.event.name}
-                      className="px-2 "
+                      className="px-2"
                       onClick={() => {
                         setModal({
                           ...modal,
@@ -251,25 +242,31 @@ const Dashboard: React.FC = () => {
                         id={meet.id}
                         available={meet.available}
                         start_at={`${meet.start_at}`}
-                        location={
-                          meet.location ? meet.location : "Sem local marcado"
-                        }
+                        location={meet.location ? meet.location : "Nenhum"}
                       />
                     </div>
                   ))}
-                  {/* <Button
-                    onClick={async () => {
-                      const newMeetings = await (
-                        await getMeetings(pageForMeetings)
-                      ).data.record;
-                      setMeetings([...meetings, ...newMeetings]);
-                      setPageForMeetings(pageForMeetings + 1);
-                      console.log("meetings = ", meetings);
-                    }}
-                    className="h-100"
-                  >
-                    +
-                  </Button> */}
+                  {meetings.length < totalMeetings && (
+                    <div className="d-flex justify-content-center h-222px">
+                      <Button
+                        variant="outline-success"
+                        className="w-100 fw-bold"
+                        onClick={async () => {
+                          const newMeetings = (
+                            await getMeetings(pageForMeetings)
+                          ).data.record[0];
+                          if (newMeetings.length > 0) {
+                            setMeetings([...meetings, ...newMeetings]);
+                            setPageForMeetings(pageForMeetings + 1);
+                            console.log(pageForMeetings);
+                          } else {
+                          }
+                        }}
+                      >
+                        + Encontros
+                      </Button>
+                    </div>
+                  )}
                 </Slider>
               </Card.Body>
             </Card>

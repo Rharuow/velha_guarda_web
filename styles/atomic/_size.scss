@@ -7,6 +7,14 @@
     width: #{$i}px;
   }
 
+  .min-h-#{$i}px {
+    min-height: #{$i}px;
+  }
+
+  .h-#{$i}px {
+    height: #{$i}px;
+  }
+
   @if ($i <= 100) {
     .w-#{$i} {
       width: #{$i}#{"%"};
@@ -15,5 +23,17 @@
     .min-w-#{$i} {
       min-width: #{$i}#{"%"};
     }
+
+    .h-#{$i} {
+      height: #{$i}#{"%"};
+    }
+
+    .min-h-#{$i} {
+      min-height: #{$i}#{"%"};
+    }
   }
+}
+
+.min-h-100vh {
+  min-height: 100vh;
 }

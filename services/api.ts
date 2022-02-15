@@ -175,6 +175,7 @@ const getMeetings = async (page: number) => {
     const authorization = await setToken();
 
     const res = await api.get(`/meetings?page=${page}`, authorization);
+    console.log(res);
     return res;
   } catch (error) {
     console.log(" get meetings = ", error);
