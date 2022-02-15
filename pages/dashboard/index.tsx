@@ -10,13 +10,7 @@ import { CharDatabase } from "../../types/database/Char";
 import Event from "../../components/Cards/Event";
 import New from "../../components/Cards/New";
 import { EventDatabase } from "../../types/database/Event";
-import {
-  availableMeet,
-  getChar,
-  getChars,
-  getEvents,
-  getMeetings,
-} from "../../services/api";
+import { availableMeet, getEvents, getMeetings } from "../../services/api";
 import { getChar as getCharCipApi } from "../../services/charApi";
 import NewEvent from "../../components/Modal/NewEvent";
 import NewMeet from "../../components/Modal/NewMeet";
@@ -28,7 +22,7 @@ import { handleUpdateChar } from "../../util/updateChar";
 import Swal from "sweetalert2";
 import { translate } from "../../translate";
 import { useRouter } from "next/router";
-import { Card } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 
 const Dashboard: React.FC = () => {
   const currentUser = useCurrentUserContext();
@@ -38,6 +32,7 @@ const Dashboard: React.FC = () => {
   const [char, setChar] = useState<CharDatabase>();
   const [events, setEvents] = useState<Array<EventDatabase>>();
   const [meetings, setMeetings] = useState<Array<MeetDatabase>>();
+  const [pageForMeetings, setPageForMeetings] = useState<number>(0);
   const [modal, setModal] = useState<{
     newEvent: { isOpen: boolean };
     showMeet: { isOpen: boolean; meet: MeetDatabase | null };
@@ -92,19 +87,38 @@ const Dashboard: React.FC = () => {
 
     const charMeetings = async () => {
       const today = new Date();
-      let tempMeeting = (await getMeetings()).data
+      let tempMeeting = meetings || [];
+      let comingMeetings = (await getMeetings(pageForMeetings)).data
         .record as Array<MeetDatabase>;
+      tempMeeting = tempMeeting?.concat(comingMeetings);
+
+      console.log("comingMeetings = ", comingMeetings);
 
       for (const meet of tempMeeting) {
         if (new Date(tempMeeting[0].start_at) < today && meet.available)
           console.log("AVAILABLE = ", await availableMeet(meet.id, false));
       }
 
+      setPageForMeetings(pageForMeetings + 1);
+
       setMeetings(tempMeeting);
     };
 
     const setUpdatedChar = async (char: CharDatabase) => {
-      updateCharInfo(char);
+      try {
+        await updateCharInfo(char);
+      } catch (error) {
+        Swal.fire({
+          title: translate()["ops!"],
+          text: translate()[
+            "There is someting something worng with CIP API. Please try again"
+          ],
+          icon: "info",
+          confirmButtonText: "Ok",
+        }).then(async () => {
+          router.reload();
+        });
+      }
     };
 
     if (currentUser && currentUser !== null && currentUser.chars) {
@@ -205,7 +219,19 @@ const Dashboard: React.FC = () => {
                 <p className="text-center fw-bold">Encontros</p>
               </Card.Header>
               <Card.Body>
-                <Slider {...settings}>
+                <Slider
+                  {...settings}
+                  onEdge={async () => {
+                    const newMeetings = await (
+                      await getMeetings(pageForMeetings)
+                    ).data.record;
+                    if (newMeetings.length > 0) {
+                      setMeetings([...meetings, ...newMeetings]);
+                      setPageForMeetings(pageForMeetings + 1);
+                      console.log(pageForMeetings);
+                    }
+                  }}
+                >
                   {meetings.map((meet) => (
                     <div
                       key={meet.event.name}
@@ -231,6 +257,19 @@ const Dashboard: React.FC = () => {
                       />
                     </div>
                   ))}
+                  {/* <Button
+                    onClick={async () => {
+                      const newMeetings = await (
+                        await getMeetings(pageForMeetings)
+                      ).data.record;
+                      setMeetings([...meetings, ...newMeetings]);
+                      setPageForMeetings(pageForMeetings + 1);
+                      console.log("meetings = ", meetings);
+                    }}
+                    className="h-100"
+                  >
+                    +
+                  </Button> */}
                 </Slider>
               </Card.Body>
             </Card>

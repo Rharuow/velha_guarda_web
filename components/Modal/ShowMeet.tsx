@@ -114,8 +114,6 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
     }
   }, [char.id, currentUser?.chars, currentUser?.id, meet?.chars]);
 
-  console.log(meet?.event.max_chars);
-
   return (
     <Modal isOpen={isOpen}>
       <div className="d-flex flex-row-reverse w-100 mb-2 align-self-start">
