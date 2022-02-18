@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, ToggleButton } from "react-bootstrap";
+import { Button, Card, Form, ToggleButton } from "react-bootstrap";
 import Slider from "react-slick";
 import ReactLoading from "react-loading";
 import Swal from "sweetalert2";
@@ -20,7 +20,11 @@ export type ModalType = {
 
 export type FilterMeetingType =
   | {
-      filters: { start_at_gteq: string; start_at_lteq: string };
+      filters: {
+        start_at_gteq: string;
+        start_at_lteq: string;
+        event: { name: string };
+      };
     }
   | {};
 
@@ -34,11 +38,12 @@ const Meetings: React.FC<{
   const [page, setPage] = useState<number>(0);
   const [todayChecked, setTodayChecked] = useState<boolean>(false);
   const [meetings, setMeetings] = useState<Array<MeetDatabase>>();
+  const [filters, setFilters] = useState<FilterMeetingType>({});
 
   const filterMeetings = async (filter: FilterMeetingType) => {
     setLoading(true);
     let [comingMeetings, getTotalMeetings] = (
-      await getMeetings(0, qs.stringify(filter))
+      await getMeetings(0, qs.stringify({ ...filters, ...filter }))
     ).data.record as [Array<MeetDatabase>, number];
     if (comingMeetings.length <= 0) {
       Swal.fire({
@@ -47,10 +52,12 @@ const Meetings: React.FC<{
         icon: "info",
       });
       setTodayChecked(false);
+      setFilters(filters);
     } else {
       setMeetings(comingMeetings);
       setTotalMeetings(getTotalMeetings);
       setPage(1);
+      setFilters({ ...filters, ...filter });
     }
 
     setLoading(false);
@@ -107,7 +114,7 @@ const Meetings: React.FC<{
                 </div>
               ))}
             {meetings.length < countMeetings && (
-              <div className="d-flex justify-content-center h-222px">
+              <div className="d-flex justify-content-center h-180px">
                 <Button
                   variant="outline-success"
                   className="w-100 fw-bold"
@@ -129,8 +136,28 @@ const Meetings: React.FC<{
         )}
       </Card.Body>
       <Card.Footer>
-        <span>Filtrar encontros por:</span>
-        <div className="d-flex">
+        <strong>Filtros</strong>
+        <div className="d-flex flex-wrap">
+          <Form className="w-100">
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Control
+                type="text"
+                placeholder="Nome do Evento"
+                onChange={(e) => {
+                  if (
+                    e.target.value.length % 3 === 0 &&
+                    e.target.value.length > 0
+                  )
+                    filterMeetings({
+                      ...filters,
+                      filters: {
+                        event: { name: e.target.value },
+                      },
+                    });
+                }}
+              />
+            </Form.Group>
+          </Form>
           <ToggleButton
             id="toggle-check"
             type="checkbox"
@@ -139,7 +166,6 @@ const Meetings: React.FC<{
             value="1"
             onChange={() => {
               setTodayChecked(!todayChecked);
-              console.log("FOI?");
               !todayChecked
                 ? filterMeetings({
                     filters: {
