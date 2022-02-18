@@ -60,7 +60,7 @@ const Meet: React.FC<PropsMeet> = ({
           </div>
         )}
         <div className="bg-lightgray px-1">
-          <p className="fw-bold">Jodadores: {partners?.length}</p>
+          <p className="fw-bold">Jogadores: {partners?.length}</p>
         </div>
         <hr />
         {showParticipants && (
