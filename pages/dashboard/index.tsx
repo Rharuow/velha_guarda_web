@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactLoading from "react-loading";
 import Slider from "react-slick";
-import { Button, Card } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 
@@ -13,37 +13,43 @@ import { CharDatabase } from "../../types/database/Char";
 import Event from "../../components/Cards/Event";
 import New from "../../components/Cards/New";
 import { EventDatabase } from "../../types/database/Event";
-import { availableMeet, getEvents, getMeetings } from "../../services/api";
+import { getEvents, getMeetings } from "../../services/api";
 import { getChar as getCharCipApi } from "../../services/charApi";
 import NewEvent from "../../components/Modal/NewEvent";
 import NewMeet from "../../components/Modal/NewMeet";
 import { MeetDatabase } from "../../types/database/Meet";
-import Meet from "../../components/Cards/Meet";
 import ShowMeet from "../../components/Modal/ShowMeet";
 import { serializeChar } from "../../util/serializerChar";
 import { handleUpdateChar } from "../../util/updateChar";
 import { translate } from "../../translate";
+import qs from "qs";
+import Meetings from "../../components/domain/Meetings";
+
+export type LoadingType = { app: boolean; meetings: boolean };
+
+export type ModalType = {
+  newEvent: { isOpen: boolean };
+  showMeet: { isOpen: boolean; meet: MeetDatabase | null };
+  newMeet: { isOpen: boolean; event: string };
+};
 
 const Dashboard: React.FC = () => {
   const currentUser = useCurrentUserContext();
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<LoadingType>({
+    app: true,
+    meetings: false,
+  });
   const [chars, setChars] = useState<Array<CharDatabase>>();
   const [char, setChar] = useState<CharDatabase>();
+
   const [events, setEvents] = useState<Array<EventDatabase>>();
-  const [meetings, setMeetings] = useState<Array<MeetDatabase>>();
-  const [pageForMeetings, setPageForMeetings] = useState<number>(0);
-  const [modal, setModal] = useState<{
-    newEvent: { isOpen: boolean };
-    showMeet: { isOpen: boolean; meet: MeetDatabase | null };
-    newMeet: { isOpen: boolean; event: string };
-  }>({
+
+  const [modal, setModal] = useState<ModalType>({
     newEvent: { isOpen: false },
     newMeet: { isOpen: false, event: "" },
     showMeet: { isOpen: false, meet: null },
   });
-
-  const [totalMeetings, setTotalMeetings] = useState<number>(0);
 
   const updateCharInfo = async (tempChar: CharDatabase) => {
     const charCipApi = await getCharCipApi(tempChar.name);
@@ -55,7 +61,7 @@ const Dashboard: React.FC = () => {
       );
       setChar(wasUpdated ? charSerialized : tempChar);
       setChars(tempChars);
-      setLoading(false);
+      setLoading({ ...loading, app: false });
     } catch (error) {
       Swal.fire({
         title: translate()["error"],
@@ -66,7 +72,7 @@ const Dashboard: React.FC = () => {
   };
 
   const handleCharProfile = async (id: string) => {
-    setLoading(true);
+    setLoading({ ...loading, app: true });
     const tempChar = currentUser?.chars?.find((char) => char.id === id);
     if (tempChar) {
       await updateCharInfo(tempChar);
@@ -85,26 +91,6 @@ const Dashboard: React.FC = () => {
     const charEvents = async () => {
       const eventsTemp = await getEvents();
       setEvents(eventsTemp?.data.record);
-    };
-
-    const charMeetings = async () => {
-      const today = new Date();
-      let tempMeeting = meetings || [];
-      let [comingMeetings, getTotalMeetings] = (
-        await getMeetings(pageForMeetings)
-      ).data.record as [Array<MeetDatabase>, number];
-      tempMeeting = tempMeeting?.concat(comingMeetings);
-
-      // for (const meet of tempMeeting) {
-      //   if (new Date(tempMeeting[0].start_at) < today && meet.available)
-      //     console.log("AVAILABLE = ", await availableMeet(meet.id, false));
-      // }
-
-      setTotalMeetings(getTotalMeetings);
-
-      setPageForMeetings(pageForMeetings + 1);
-
-      setMeetings(tempMeeting);
     };
 
     const setUpdatedChar = async (char: CharDatabase) => {
@@ -130,15 +116,14 @@ const Dashboard: React.FC = () => {
         currentUser.chars.filter((c, index, self) => c.name !== self[0].name)
       );
       charEvents();
-      charMeetings();
-      setLoading(false);
+      setLoading({ app: false, meetings: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   return (
     <div className="d-flex justify-content-center flex-wrap overflow-hidden">
-      {!loading && char ? (
+      {!loading.app && char ? (
         <>
           <NewEvent
             modalIsOpen={modal.newEvent.isOpen}
@@ -216,61 +201,7 @@ const Dashboard: React.FC = () => {
           </Card>
 
           {/* Encontros */}
-          {meetings && meetings.length > 0 && (
-            <Card className="mb-4 w-100">
-              <Card.Header>
-                <p className="text-center fw-bold">Encontros</p>
-              </Card.Header>
-              <Card.Body>
-                <Slider {...settings}>
-                  {meetings.map((meet) => (
-                    <div
-                      key={meet.event.name}
-                      className="px-2"
-                      onClick={() => {
-                        setModal({
-                          ...modal,
-                          showMeet: {
-                            isOpen: true,
-                            meet,
-                          },
-                        });
-                      }}
-                    >
-                      <Meet
-                        event={meet.event}
-                        id={meet.id}
-                        available={meet.available}
-                        start_at={`${meet.start_at}`}
-                        location={meet.location ? meet.location : "Nenhum"}
-                      />
-                    </div>
-                  ))}
-                  {meetings.length < totalMeetings && (
-                    <div className="d-flex justify-content-center h-222px">
-                      <Button
-                        variant="outline-success"
-                        className="w-100 fw-bold"
-                        onClick={async () => {
-                          const newMeetings = (
-                            await getMeetings(pageForMeetings)
-                          ).data.record[0];
-                          if (newMeetings.length > 0) {
-                            setMeetings([...meetings, ...newMeetings]);
-                            setPageForMeetings(pageForMeetings + 1);
-                            console.log(pageForMeetings);
-                          } else {
-                          }
-                        }}
-                      >
-                        + Encontros
-                      </Button>
-                    </div>
-                  )}
-                </Slider>
-              </Card.Body>
-            </Card>
-          )}
+          <Meetings setModal={setModal} modal={modal} />
 
           <div className="mb-4 w-100">
             <Slider {...settings} className="h-100">

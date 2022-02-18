@@ -20,13 +20,14 @@ import {
 import { CharDatabase } from "../../types/database/Char";
 import { EventDatabase } from "../../types/database/Event";
 import { useCurrentUserContext } from "../Page/Application";
+import { LoadingType } from "../../pages/dashboard";
 
 export type PropsNewMeet = {
   modalIsOpen: boolean;
   afterOpenModal?: () => void;
   closeModal: () => void;
-  loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: LoadingType;
+  setLoading: React.Dispatch<React.SetStateAction<LoadingType>>;
   eventId: string;
   char: CharDatabase;
 };
@@ -59,7 +60,7 @@ const NewMeet: React.FC<PropsNewMeet> = ({
   }T${new Date().getHours()}:${new Date().getMinutes()}`;
 
   const onSubmit = async ({ start_at, location }: CreateFormMeetDatabase) => {
-    setLoading(true);
+    setLoading({ ...loading, app: true });
 
     const dataFormatted: CreateMeetDatabase = {
       char_id: char.id ? char.id : "",
@@ -69,6 +70,8 @@ const NewMeet: React.FC<PropsNewMeet> = ({
     };
 
     const session = await getSession();
+
+    console.log("session = ", session);
 
     session && (await createMeet(dataFormatted));
 
@@ -80,7 +83,7 @@ const NewMeet: React.FC<PropsNewMeet> = ({
     }).then(() => {
       router.reload();
     });
-    setLoading(false);
+    setLoading({ ...loading, app: false });
     closeModal();
   };
 

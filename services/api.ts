@@ -170,11 +170,14 @@ const getCharMeetings = async (charId: string) => {
   }
 };
 
-const getMeetings = async (page: number) => {
+const getMeetings = async (page: number, filter?: string) => {
   try {
     const authorization = await setToken();
 
-    const res = await api.get(`/meetings?page=${page}`, authorization);
+    const res = await api.get(
+      `/meetings?page=${page}${filter ? `&${filter}` : ""}`,
+      authorization
+    );
     console.log(res);
     return res;
   } catch (error) {

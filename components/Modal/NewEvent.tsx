@@ -8,12 +8,13 @@ import { EventDatabase } from "../../types/database/Event";
 import { createEvent } from "../../services/api";
 import { translate } from "../../translate";
 import { useRouter } from "next/router";
+import { LoadingType } from "../../pages/dashboard";
 
 export type PropsNewEvent = {
   modalIsOpen: boolean;
   closeModal: () => void;
-  loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: LoadingType;
+  setLoading: React.Dispatch<React.SetStateAction<LoadingType>>;
 };
 
 const NewEvent: React.FC<PropsNewEvent> = ({
@@ -34,7 +35,7 @@ const NewEvent: React.FC<PropsNewEvent> = ({
     max_chars,
     min_chars,
   }: EventDatabase) => {
-    setLoading(true);
+    setLoading({ ...loading, app: true });
     const dataFormatted: EventDatabase = {
       cooldown,
       name,
@@ -57,7 +58,7 @@ const NewEvent: React.FC<PropsNewEvent> = ({
     }).then(() => {
       router.reload();
     });
-    setLoading(false);
+    setLoading({ ...loading, app: false });
     closeModal();
   };
 
