@@ -102,6 +102,7 @@ const Meetings: React.FC<{
                     available={meet.available}
                     start_at={`${meet.start_at}`}
                     location={meet.location ? meet.location : "Nenhum"}
+                    showParticipants={false}
                   />
                 </div>
               ))}

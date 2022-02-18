@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, ListGroup } from "react-bootstrap";
+import { Accordion, Card, ListGroup } from "react-bootstrap";
 import { getMeetChars } from "../../services/api";
 import { CharDatabase } from "../../types/database/Char";
 import { EventDatabase } from "../../types/database/Event";
@@ -11,6 +11,7 @@ export type PropsMeet = {
   available: boolean;
   event: EventDatabase;
   className?: string;
+  showParticipants?: boolean;
 };
 
 const Meet: React.FC<PropsMeet> = ({
@@ -19,6 +20,7 @@ const Meet: React.FC<PropsMeet> = ({
   location,
   event,
   available,
+  showParticipants = true,
   className,
 }) => {
   const [partners, setPartners] = useState<Array<CharDatabase>>();
@@ -61,21 +63,32 @@ const Meet: React.FC<PropsMeet> = ({
           <p className="fw-bold">Jodadores: {partners?.length}</p>
         </div>
         <hr />
-        <ListGroup>
-          {partners &&
-            partners.map((partner, index) => (
-              <div key={partner.name}>
-                <ListGroup.Item
-                  variant={`${index % 2 === 0 ? "dark" : "secondary"}`}
-                >
-                  <span className="text-sm fs-13px">
-                    {partner.name}{" "}
-                    <strong className="text-uppercase">({partner.voc})</strong>
-                  </span>
-                </ListGroup.Item>
-              </div>
-            ))}
-        </ListGroup>
+        {showParticipants && (
+          <Accordion defaultActiveKey={id}>
+            <Accordion.Item eventKey={id}>
+              <Accordion.Header>Participantes</Accordion.Header>
+              <Accordion.Body>
+                <ListGroup>
+                  {partners &&
+                    partners.map((partner, index) => (
+                      <div key={partner.name}>
+                        <ListGroup.Item
+                          variant={`${index % 2 === 0 ? "dark" : "secondary"}`}
+                        >
+                          <span className="text-sm fs-13px">
+                            {partner.name}{" "}
+                            <strong className="text-uppercase">
+                              ({partner.voc})
+                            </strong>
+                          </span>
+                        </ListGroup.Item>
+                      </div>
+                    ))}
+                </ListGroup>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+        )}
       </Card.Body>
     </Card>
   );
