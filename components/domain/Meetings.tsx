@@ -11,12 +11,7 @@ import { DateTime } from "luxon";
 import qs from "qs";
 import { translate } from "../../translate";
 import { useRouter } from "next/router";
-
-export type ModalType = {
-  newEvent: { isOpen: boolean };
-  showMeet: { isOpen: boolean; meet: MeetDatabase | null };
-  newMeet: { isOpen: boolean; event: string };
-};
+import { ModalType } from "../../pages/dashboard";
 
 export type FilterMeetingType =
   | {
@@ -100,53 +95,76 @@ const Meetings: React.FC<{
 
   return (
     <Card className="mb-4 w-100">
-      <Card.Header>
-        <p className="text-center fw-bold">Encontros</p>
+      <Card.Header className="d-flex align-items-center">
+        <strong className="text-center fs-16px flex-grow-1">Eventos</strong>
+        <Button
+          className="fw-bold rounded-circle align-self-end"
+          onClick={() => {
+            setModal({
+              ...modal,
+              newMeet: { isOpen: true },
+            });
+          }}
+        >
+          +
+        </Button>
       </Card.Header>
       <Card.Body>
-        {!loading && meetings ? (
-          <Slider {...settings}>
-            {meetings.length > 0 &&
-              meetings.map((meet) => (
-                <div
-                  key={meet.event.name}
-                  className="px-2"
-                  onClick={() => {
-                    setModal({
-                      ...modal,
-                      showMeet: {
-                        isOpen: true,
-                        meet,
-                      },
-                    });
-                  }}
-                >
-                  <Meet
-                    event={meet.event}
-                    id={meet.id}
-                    available={meet.available}
-                    start_at={`${meet.start_at}`}
-                    location={meet.location ? meet.location : "Nenhum"}
-                    showParticipants={false}
-                  />
+        {meetings && !loading ? (
+          <>
+            {meetings.length > 0 ? (
+              <Slider {...settings}>
+                {meetings.map((meet) => (
+                  <div
+                    key={meet.event.name}
+                    className="px-2"
+                    onClick={() => {
+                      setModal({
+                        ...modal,
+                        showMeet: {
+                          isOpen: true,
+                          meet,
+                        },
+                      });
+                    }}
+                  >
+                    <Meet
+                      event={meet.event}
+                      id={meet.id}
+                      available={meet.available}
+                      start_at={`${meet.start_at}`}
+                      location={meet.location ? meet.location : "Nenhum"}
+                      showParticipants={false}
+                    />
+                  </div>
+                ))}
+                {meetings.length < countMeetings && (
+                  <div className="d-flex justify-content-center h-180px">
+                    <Button
+                      variant="outline-success"
+                      className="w-100 fw-bold"
+                      onClick={async () => {
+                        const tempMeeting = (await getMeetings(page)).data
+                          .record[0];
+                        setMeetings([...meetings, ...tempMeeting]);
+                      }}
+                    >
+                      + Encontros
+                    </Button>
+                  </div>
+                )}
+              </Slider>
+            ) : (
+              <div className="d-flex justify-content-center flex-wrap">
+                <i className="far fa-frown text-danger fs-30px" />
+                <div className="w-100  d-flex justify-content-center">
+                  <strong className="text-danger">
+                    Sem Encontros no momento
+                  </strong>
                 </div>
-              ))}
-            {meetings.length < countMeetings && (
-              <div className="d-flex justify-content-center h-180px">
-                <Button
-                  variant="outline-success"
-                  className="w-100 fw-bold"
-                  onClick={async () => {
-                    const tempMeeting = (await getMeetings(page)).data
-                      .record[0];
-                    setMeetings([...meetings, ...tempMeeting]);
-                  }}
-                >
-                  + Encontros
-                </Button>
               </div>
             )}
-          </Slider>
+          </>
         ) : (
           <div className="h-100vh d-flex justify-content-center align-items-center">
             <ReactLoading type="spinningBubbles" color="dark" />

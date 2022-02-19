@@ -15,6 +15,10 @@
     height: #{$i}px;
   }
 
+  .fs#{$i}px {
+    font-size: #{$i}px;
+  }
+
   @if ($i <= 100) {
     .w-#{$i} {
       width: #{$i}#{"%"};

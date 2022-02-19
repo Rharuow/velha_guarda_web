@@ -21,6 +21,7 @@ export type CreateMeetDatabase = {
 };
 
 export type CreateFormMeetDatabase = {
+  event_id: string;
   start_at: Date;
   location?: string;
 };

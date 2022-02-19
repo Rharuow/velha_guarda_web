@@ -23,7 +23,7 @@ import Events from "../../components/domain/Events";
 export type ModalType = {
   newEvent: { isOpen: boolean };
   showMeet: { isOpen: boolean; meet: MeetDatabase | null };
-  newMeet: { isOpen: boolean; event: string };
+  newMeet: { isOpen: boolean };
 };
 
 const Dashboard: React.FC = () => {
@@ -35,7 +35,7 @@ const Dashboard: React.FC = () => {
 
   const [modal, setModal] = useState<ModalType>({
     newEvent: { isOpen: false },
-    newMeet: { isOpen: false, event: "" },
+    newMeet: { isOpen: false },
     showMeet: { isOpen: false, meet: null },
   });
 
@@ -118,11 +118,10 @@ const Dashboard: React.FC = () => {
           <NewMeet
             modalIsOpen={modal.newMeet.isOpen}
             closeModal={() =>
-              setModal({ ...modal, newMeet: { isOpen: false, event: "" } })
+              setModal({ ...modal, newMeet: { isOpen: false } })
             }
             loading={loading}
             setLoading={setLoading}
-            eventId={modal.newMeet.event}
             char={char}
           />
           <ShowMeet

@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
 import { getSession } from "next-auth/react";
 import Modal from "react-modal";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import Swal from "sweetalert2";
+import Select from "react-select";
 
 import {
   createEvent,
   createMeet,
   deleteEvent,
   getEvent,
+  getEvents,
 } from "../../services/api";
 import { translate } from "../../translate";
 import { useRouter } from "next/router";
@@ -20,31 +22,27 @@ import {
 import { CharDatabase } from "../../types/database/Char";
 import { EventDatabase } from "../../types/database/Event";
 import { useCurrentUserContext } from "../Page/Application";
-import { LoadingType } from "../../pages/dashboard";
 
 export type PropsNewMeet = {
   modalIsOpen: boolean;
-  afterOpenModal?: () => void;
   closeModal: () => void;
-  loading: LoadingType;
-  setLoading: React.Dispatch<React.SetStateAction<LoadingType>>;
-  eventId: string;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   char: CharDatabase;
 };
 
 const NewMeet: React.FC<PropsNewMeet> = ({
   modalIsOpen,
-  afterOpenModal,
   closeModal,
   loading,
   setLoading,
-  eventId,
   char,
 }) => {
-  const { register, handleSubmit } = useForm<CreateMeetDatabase>();
+  const { register, handleSubmit, control, setValue } =
+    useForm<CreateFormMeetDatabase>();
 
-  const [event, setEvent] = useState<EventDatabase>();
-
+  const [options, setOptions] =
+    useState<Array<{ value: string; label: string }>>();
   const currentUser = useCurrentUserContext();
 
   const router = useRouter();
@@ -59,21 +57,21 @@ const NewMeet: React.FC<PropsNewMeet> = ({
       : new Date().getDate()
   }T${new Date().getHours()}:${new Date().getMinutes()}`;
 
-  const onSubmit = async ({ start_at, location }: CreateFormMeetDatabase) => {
-    setLoading({ ...loading, app: true });
+  const onSubmit = async ({
+    start_at,
+    location,
+    event_id,
+  }: CreateFormMeetDatabase) => {
+    setLoading(true);
 
     const dataFormatted: CreateMeetDatabase = {
       char_id: char.id ? char.id : "",
-      event_id: eventId,
+      event_id,
       start_at,
       location,
     };
 
-    const session = await getSession();
-
-    console.log("session = ", session);
-
-    session && (await createMeet(dataFormatted));
+    await createMeet(dataFormatted);
 
     Swal.fire({
       title: translate()["Greate!"],
@@ -83,37 +81,20 @@ const NewMeet: React.FC<PropsNewMeet> = ({
     }).then(() => {
       router.reload();
     });
-    setLoading({ ...loading, app: false });
+    setLoading(false);
     closeModal();
   };
 
-  const handleDeleteEvent = async (id: string) => {
-    const res = await deleteEvent(id);
-
-    if (res.status === 300)
-      return Swal.fire({
-        title: translate()["ops!"],
-        text: translate()["error"],
-        icon: "info",
-      }).then(() => router.reload());
-
-    return Swal.fire({
-      title: translate()["Greate!"],
-      text: translate()["Event was deleted"],
-      icon: "success",
-    }).then(() => router.reload());
-  };
-
   useEffect(() => {
-    const recoveryEvent = async () => {
-      const session = await getSession();
-      let tempEvent;
-      if (session)
-        tempEvent = (await getEvent(eventId)).data.record as EventDatabase;
-      setEvent(tempEvent);
-    };
-    recoveryEvent();
-  }, [eventId]);
+    getEvents().then((res) => {
+      console.log("res = ", res.data.record);
+      const tempOpts: Array<{ value: string; label: string }> = [];
+      res.data.record.forEach((ev: EventDatabase) => {
+        tempOpts.push({ value: `${ev.id}`, label: ev.name });
+      });
+      setOptions(tempOpts);
+    });
+  }, []);
 
   return (
     <Modal isOpen={modalIsOpen}>
@@ -134,18 +115,6 @@ const NewMeet: React.FC<PropsNewMeet> = ({
           </Card.Header>
           <Card.Body>
             <div className="d-flex justify-content-between bg-secondary rounded px-2">
-              <span className="text-white fw-bold">Evento:</span>
-              <strong>{event?.name}</strong>
-            </div>
-            <div className="d-flex justify-content-between bg-white rounded px-2">
-              <span className="fw-bold">Cooldown:</span>
-              <strong className="text-dark">
-                {event && event.cooldown >= 24
-                  ? `${event.cooldown / 24} dias`
-                  : event && `${event.cooldown} h`}
-              </strong>
-            </div>
-            <div className="d-flex justify-content-between bg-secondary rounded px-2">
               <span className="text-white fw-bold">Char:</span>
               <strong>{char.name}</strong>
             </div>
@@ -158,17 +127,28 @@ const NewMeet: React.FC<PropsNewMeet> = ({
               <strong className="text-dark text-uppercase">{char.voc}</strong>
             </div>
 
-            {currentUser?.is_admin && (
-              <Button
-                variant="danger"
-                onClick={() => handleDeleteEvent(eventId)}
-                className="w-100"
-              >
-                Excluir Evento
-              </Button>
-            )}
-
             <Form onSubmit={handleSubmit(onSubmit)}>
+              <Form.Group className="my-3">
+                <Form.Label className="text-dark fw-bold">Evento</Form.Label>
+                <Controller
+                  name="event_id"
+                  render={() => (
+                    <Select
+                      options={options}
+                      placeholder="Escolha uma opção"
+                      styles={{
+                        menu: () => ({
+                          color: "black",
+                        }),
+                      }}
+                      onChange={(e) => {
+                        e && setValue("event_id", e?.value);
+                      }}
+                    />
+                  )}
+                  control={control}
+                />
+              </Form.Group>
               <Form.Group className="mb-3" controlId="name">
                 <Form.Label className="text-dark fw-bold">Dia</Form.Label>
                 <Form.Control
