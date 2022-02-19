@@ -81,7 +81,11 @@ const Events: React.FC<EventPropType> = ({ modal, setModal, char }) => {
                     key={ev.name}
                     className="px-2 "
                     onClick={() => {
-                      console.log("EDIT EVENT");
+                      currentUser?.is_admin &&
+                        setModal({
+                          ...modal,
+                          showEvent: { isOpen: true, event: ev },
+                        });
                     }}
                   >
                     <Event {...ev} />

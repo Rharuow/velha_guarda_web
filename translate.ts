@@ -18,6 +18,7 @@ export const translate = (language = "pt-BR") => {
         error: "Algo deu errado, desculpe!",
         "Password or email incorrects": "Senha ou email incorretos",
         "Event was registred": "O evento foi registrado com sucesso",
+        "Event was changed": "O evento foi alterado com sucesso",
         "Event was deleted": "O evento foi apagado com sucesso",
         "Event wasn't load": "Os eventos não foram carregados",
         "Meet was registred": "O encontro foi registrado com sucesso",

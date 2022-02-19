@@ -114,6 +114,39 @@ const getEvents = async () => {
   }
 };
 
+const editEvent = async ({
+  cooldown,
+  name,
+  id,
+  lvl_max,
+  lvl_min,
+  max_chars,
+  min_chars,
+}: EventDatabase) => {
+  try {
+    const authorization = await setToken();
+
+    const res = await api.put(
+      `/events/${id}`,
+      {
+        cooldown,
+        name,
+        lvl_max,
+        lvl_min,
+        max_chars,
+        min_chars,
+      },
+      authorization
+    );
+
+    return res;
+  } catch (error) {
+    console.log("get event error = ", error);
+
+    return setError(`get event error = ${error}`);
+  }
+};
+
 const getEvent = async (id: string) => {
   try {
     const authorization = await setToken();
@@ -257,6 +290,7 @@ export {
   deleteMeet,
   getEvents,
   deleteEvent,
+  editEvent,
   getEvent,
   createMeet,
   createEvent,

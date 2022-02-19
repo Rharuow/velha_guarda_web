@@ -19,10 +19,13 @@ import { handleUpdateChar } from "../../util/updateChar";
 import { translate } from "../../translate";
 import Meetings from "../../components/domain/Meetings";
 import Events from "../../components/domain/Events";
+import ShowEvent from "../../components/Modal/ShowEvent";
+import { EventDatabase } from "../../types/database/Event";
 
 export type ModalType = {
   newEvent: { isOpen: boolean };
   showMeet: { isOpen: boolean; meet: MeetDatabase | null };
+  showEvent: { isOpen: boolean; event: EventDatabase | null };
   newMeet: { isOpen: boolean };
 };
 
@@ -37,6 +40,7 @@ const Dashboard: React.FC = () => {
     newEvent: { isOpen: false },
     newMeet: { isOpen: false },
     showMeet: { isOpen: false, meet: null },
+    showEvent: { isOpen: false, event: null },
   });
 
   const updateCharInfo = async (tempChar: CharDatabase) => {
@@ -134,6 +138,16 @@ const Dashboard: React.FC = () => {
                 showMeet: { ...modal.showMeet, isOpen: false },
               })
             }
+          />
+          <ShowEvent
+            closeModal={() =>
+              setModal({
+                ...modal,
+                showEvent: { isOpen: false, event: null },
+              })
+            }
+            event={modal.showEvent.event}
+            modalIsOpen={modal.showEvent.isOpen}
           />
           <div className="mb-4 w-100">
             <Header />
