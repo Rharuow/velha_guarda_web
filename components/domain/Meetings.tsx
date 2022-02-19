@@ -28,6 +28,10 @@ export type FilterMeetingType =
     }
   | {};
 
+export type ErrorMessageType =
+  | "There ins't meet today!"
+  | "There ins't meet with title!";
+
 const Meetings: React.FC<{
   setModal: React.Dispatch<React.SetStateAction<ModalType>>;
   modal: ModalType;
@@ -40,7 +44,10 @@ const Meetings: React.FC<{
   const [meetings, setMeetings] = useState<Array<MeetDatabase>>();
   const [filters, setFilters] = useState<FilterMeetingType>({});
 
-  const filterMeetings = async (filter: FilterMeetingType) => {
+  const filterMeetings = async (
+    filter: FilterMeetingType,
+    errorMessage: ErrorMessageType = "There ins't meet today!"
+  ) => {
     setLoading(true);
     let [comingMeetings, getTotalMeetings] = (
       await getMeetings(0, qs.stringify({ ...filters, ...filter }))
@@ -48,7 +55,7 @@ const Meetings: React.FC<{
     if (comingMeetings.length <= 0) {
       Swal.fire({
         title: translate()["ops!"],
-        text: translate()["There ins't meet today"],
+        text: translate()[errorMessage],
         icon: "info",
       });
       setTodayChecked(false);
@@ -145,13 +152,23 @@ const Meetings: React.FC<{
                 placeholder="Nome do Evento"
                 onChange={(e) => {
                   if (
-                    e.target.value.length % 3 === 0 &&
+                    e.target.value.length % 2 === 0 &&
                     e.target.value.length > 0
                   )
+                    filterMeetings(
+                      {
+                        ...filters,
+                        filters: {
+                          event: { name: e.target.value },
+                        },
+                      },
+                      "There ins't meet with title!"
+                    );
+                  if (e.target.value.length === 0)
                     filterMeetings({
                       ...filters,
                       filters: {
-                        event: { name: e.target.value },
+                        event: { name: "" },
                       },
                     });
                 }}
