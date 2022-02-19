@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReactLoading from "react-loading";
 import Slider from "react-slick";
-import { Card } from "react-bootstrap";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 
@@ -10,10 +9,6 @@ import Char from "../../components/Cards/Char";
 import Header from "../../components/domain/Header";
 import { useCurrentUserContext } from "../../components/Page/Application";
 import { CharDatabase } from "../../types/database/Char";
-import Event from "../../components/Cards/Event";
-import New from "../../components/Cards/New";
-import { EventDatabase } from "../../types/database/Event";
-import { getEvents, getMeetings } from "../../services/api";
 import { getChar as getCharCipApi } from "../../services/charApi";
 import NewEvent from "../../components/Modal/NewEvent";
 import NewMeet from "../../components/Modal/NewMeet";
@@ -22,10 +17,8 @@ import ShowMeet from "../../components/Modal/ShowMeet";
 import { serializeChar } from "../../util/serializerChar";
 import { handleUpdateChar } from "../../util/updateChar";
 import { translate } from "../../translate";
-import qs from "qs";
 import Meetings from "../../components/domain/Meetings";
-
-export type LoadingType = { app: boolean; meetings: boolean };
+import Events from "../../components/domain/Events";
 
 export type ModalType = {
   newEvent: { isOpen: boolean };
@@ -36,14 +29,9 @@ export type ModalType = {
 const Dashboard: React.FC = () => {
   const currentUser = useCurrentUserContext();
   const router = useRouter();
-  const [loading, setLoading] = useState<LoadingType>({
-    app: true,
-    meetings: false,
-  });
+  const [loading, setLoading] = useState<boolean>(true);
   const [chars, setChars] = useState<Array<CharDatabase>>();
   const [char, setChar] = useState<CharDatabase>();
-
-  const [events, setEvents] = useState<Array<EventDatabase>>();
 
   const [modal, setModal] = useState<ModalType>({
     newEvent: { isOpen: false },
@@ -61,7 +49,7 @@ const Dashboard: React.FC = () => {
       );
       setChar(wasUpdated ? charSerialized : tempChar);
       setChars(tempChars);
-      setLoading({ ...loading, app: false });
+      setLoading(false);
     } catch (error) {
       Swal.fire({
         title: translate()["error"],
@@ -72,7 +60,7 @@ const Dashboard: React.FC = () => {
   };
 
   const handleCharProfile = async (id: string) => {
-    setLoading({ ...loading, app: true });
+    setLoading(true);
     const tempChar = currentUser?.chars?.find((char) => char.id === id);
     if (tempChar) {
       await updateCharInfo(tempChar);
@@ -88,11 +76,6 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    const charEvents = async () => {
-      const eventsTemp = await getEvents();
-      setEvents(eventsTemp?.data.record);
-    };
-
     const setUpdatedChar = async (char: CharDatabase) => {
       try {
         await updateCharInfo(char);
@@ -115,15 +98,14 @@ const Dashboard: React.FC = () => {
       setChars(
         currentUser.chars.filter((c, index, self) => c.name !== self[0].name)
       );
-      charEvents();
-      setLoading({ app: false, meetings: false });
+      setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   return (
     <div className="d-flex justify-content-center flex-wrap overflow-hidden">
-      {!loading.app && char ? (
+      {!loading && char ? (
         <>
           <NewEvent
             modalIsOpen={modal.newEvent.isOpen}
@@ -161,44 +143,7 @@ const Dashboard: React.FC = () => {
             <CharDetailed {...char} />
           </div>
           {/* Eventos */}
-          <Card className="mb-4 w-100">
-            <Card.Header>
-              <p className="text-center fw-bold">Eventos</p>
-            </Card.Header>
-            <Card.Body>
-              <Slider {...settings}>
-                {currentUser?.is_admin && (
-                  <div key={char.name} className="px-2 ">
-                    <New
-                      title="Evento"
-                      onClick={() => {
-                        setModal({
-                          ...modal,
-                          newEvent: { isOpen: !modal.newEvent.isOpen },
-                        });
-                      }}
-                    />
-                  </div>
-                )}
-                {events &&
-                  events.length > 0 &&
-                  events.map((ev) => (
-                    <div
-                      key={ev.name}
-                      className="px-2 "
-                      onClick={() => {
-                        setModal({
-                          ...modal,
-                          newMeet: { isOpen: true, event: ev.id ? ev.id : "" },
-                        });
-                      }}
-                    >
-                      <Event {...ev} />
-                    </div>
-                  ))}
-              </Slider>
-            </Card.Body>
-          </Card>
+          <Events char={char} modal={modal} setModal={setModal} />
 
           {/* Encontros */}
           <Meetings setModal={setModal} modal={modal} />

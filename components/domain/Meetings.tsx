@@ -71,11 +71,22 @@ const Meetings: React.FC<{
   };
 
   useEffect(() => {
-    getMeetings(0).then((res) => {
-      setMeetings(res.data.record[0]);
-      setTotalMeetings(res.data.record[1]);
-      setPage(1);
-    });
+    getMeetings(0)
+      .then((res) => {
+        setMeetings(res.data.record[0]);
+        setTotalMeetings(res.data.record[1]);
+        setPage(1);
+      })
+      .catch(() => {
+        Swal.fire({
+          title: translate()["ops!"],
+          text: translate()["Meet wasn't load"],
+          icon: "info",
+          confirmButtonText: "Ok",
+        }).then(async () => {
+          router.reload();
+        });
+      });
     setLoading(false);
   }, []);
 
