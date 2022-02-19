@@ -6,7 +6,12 @@ import Swal from "sweetalert2";
 import ReactLoading from "react-loading";
 
 import { EventDatabase } from "../../types/database/Event";
-import { createEvent, editEvent, getEvent } from "../../services/api";
+import {
+  createEvent,
+  deleteEvent,
+  editEvent,
+  getEvent,
+} from "../../services/api";
 import { translate } from "../../translate";
 import { useRouter } from "next/router";
 
@@ -60,6 +65,32 @@ const ShowEvent: React.FC<PropsShowEvent> = ({
     });
     setLoading(false);
     closeModal();
+  };
+
+  const onDelete = (id: string) => {
+    deleteEvent(id)
+      .then((res) => {
+        Swal.fire({
+          title: translate()["Greate!"],
+          icon: "success",
+          text: translate()["Event was deleted"],
+          confirmButtonText: "Confimar",
+        }).then(() => {
+          router.reload();
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          title: translate()["ops!"],
+          icon: "error",
+          text: translate()[
+            "There is someting something worng with CIP API. Please try again"
+          ],
+          confirmButtonText: "Confimar",
+        }).then(() => {
+          router.reload();
+        });
+      });
   };
 
   useEffect(() => {
@@ -170,7 +201,16 @@ const ShowEvent: React.FC<PropsShowEvent> = ({
                   />
                 </Form.Group>
 
-                <Button type="submit">Salvar</Button>
+                <div className="d-flex justify-content-around">
+                  <Button type="submit">Salvar</Button>
+
+                  <Button
+                    variant="danger"
+                    onClick={() => event && event.id && onDelete(event.id)}
+                  >
+                    Deletar
+                  </Button>
+                </div>
               </Form>
             </Card.Body>
           </Card>
