@@ -87,7 +87,6 @@ const NewMeet: React.FC<PropsNewMeet> = ({
 
   useEffect(() => {
     getEvents().then((res) => {
-      console.log("res = ", res.data.record);
       const tempOpts: Array<{ value: string; label: string }> = [];
       res.data.record.forEach((ev: EventDatabase) => {
         tempOpts.push({ value: `${ev.id}`, label: ev.name });
