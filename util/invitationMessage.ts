@@ -7,7 +7,7 @@ export const meetInvitation = (event: EventDatabase, meet: MeetDatabase) => {
   );
 
   return (
-    `Fala ${process.env.NEXT_PUBLIC_APP_NAME}. \nTa rolando um encontro de *${
+    `Fala ${process.env.NEXT_PUBLIC_APP_NAME}. \r\nTa rolando um encontro de *${
       event.name
     }* as *${meet.start_at.toString().split("T")[1].split(".")[0]}* no dia *${
       meet.start_at.toString().split("T")[0].split("-")[2] +
@@ -15,11 +15,11 @@ export const meetInvitation = (event: EventDatabase, meet: MeetDatabase) => {
       meet.start_at.toString().split("T")[0].split("-")[1] +
       "/" +
       meet.start_at.toString().split("T")[0].split("-")[0]
-    }*!\n Até agora temos *${meet.chars.length}*, chega mais no nosso app (${
+    }*!\r\n Até agora temos *${meet.chars.length}*, chega mais no nosso app (${
       process.env.NEXT_PUBLIC_SITE
     }dashboard) pra participar!` +
-    `\n    Participantes:` +
+    `\r\n    Participantes:` +
     partners.join() +
-    "\n    ( ) Sua vaga te espera la no app"
+    "\r\n    ( ) Sua vaga te espera la no app"
   );
 };
