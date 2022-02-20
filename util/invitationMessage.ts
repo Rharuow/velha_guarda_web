@@ -17,7 +17,7 @@ export const meetInvitation = (event: EventDatabase, meet: MeetDatabase) => {
       meet.start_at.toString().split("T")[0].split("-")[0]
     }*!\n Até agora temos *${meet.chars.length}*, chega mais no nosso app (${
       process.env.NEXT_PUBLIC_SITE
-    }/dashboard) pra participar!` +
+    }dashboard) pra participar!` +
     `\n    Participantes:` +
     partners.join() +
     "\n    ( ) Sua vaga te espera la no app"
