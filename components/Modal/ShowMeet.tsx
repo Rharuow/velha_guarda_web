@@ -1,3 +1,4 @@
+import copy from "copy-to-clipboard";
 import _ from "lodash";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -8,6 +9,7 @@ import { deleteCharMeet, deleteMeet, insertCharMeet } from "../../services/api";
 import { translate } from "../../translate";
 import { CharDatabase } from "../../types/database/Char";
 import { MeetDatabase } from "../../types/database/Meet";
+import { meetInvitation } from "../../util/invitationMessage";
 import Char from "../Cards/Char";
 import Meet from "../Cards/Meet";
 import { useCurrentUserContext } from "../Page/Application";
@@ -137,6 +139,14 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
             start_at={`${meet.start_at}`}
             location={meet.location}
           />
+          <hr />
+          <Button
+            className="my-2"
+            onClick={() => copy(meetInvitation(meet.event, meet))}
+          >
+            Copiar um convite
+          </Button>
+          <hr />
           {!meet?.chars.some((c) => char.name === c.name) &&
           !userAlreadyAtMeet &&
           meet.available ? (
