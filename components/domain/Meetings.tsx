@@ -96,7 +96,7 @@ const Meetings: React.FC<{
   return (
     <Card className="mb-4 w-100">
       <Card.Header className="d-flex align-items-center">
-        <strong className="text-center fs-16px flex-grow-1">Eventos</strong>
+        <strong className="text-center fs-16px flex-grow-1">Encontros</strong>
         <Button
           className="fw-bold rounded-circle align-self-end"
           onClick={() => {
