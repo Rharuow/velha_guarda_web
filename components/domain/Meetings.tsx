@@ -235,7 +235,7 @@ const Meetings: React.FC<{
                       ).toISO(),
                     },
                   })
-                : filterMeetings({});
+                : filterMeetings({ filters: {} });
             }}
           >
             Hoje
