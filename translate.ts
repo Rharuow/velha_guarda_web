@@ -22,7 +22,7 @@ export const translate = (language = "pt-BR") => {
         "Event was deleted": "O evento foi apagado com sucesso",
         "Event wasn't load": "Os eventos não foram carregados",
         "Meet was registred": "O encontro foi registrado com sucesso",
-        "Meet wasn't load": "Os encontros foram carregados",
+        "Meet wasn't load": "Os encontros não foram carregados",
         "There ins't meet today!": "Não há encontros hoje!",
         "There ins't meet with title!": "Não há encontros com esse título!",
         "Your char was add on meet": "Seu Char foi adicionado ao encontro",
