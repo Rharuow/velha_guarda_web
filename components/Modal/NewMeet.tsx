@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
-import { getSession } from "next-auth/react";
 import Modal from "react-modal";
 import { useForm, Controller } from "react-hook-form";
 import Swal from "sweetalert2";
 import Select from "react-select";
 
-import {
-  createEvent,
-  createMeet,
-  deleteEvent,
-  getEvent,
-  getEvents,
-} from "../../services/api";
+import { createMeet, getEvents } from "../../services/api";
 import { translate } from "../../translate";
 import { useRouter } from "next/router";
 import {
@@ -38,7 +31,7 @@ const NewMeet: React.FC<PropsNewMeet> = ({
   setLoading,
   char,
 }) => {
-  const { register, handleSubmit, control, setValue } =
+  const { register, handleSubmit, control, setValue, watch } =
     useForm<CreateFormMeetDatabase>();
 
   const [options, setOptions] =
@@ -103,7 +96,10 @@ const NewMeet: React.FC<PropsNewMeet> = ({
             variant="danger"
             size="sm"
             className="rounded-circle"
-            onClick={() => closeModal()}
+            onClick={() => {
+              setValue("event_id", "");
+              closeModal();
+            }}
           >
             X
           </Button>
@@ -125,7 +121,6 @@ const NewMeet: React.FC<PropsNewMeet> = ({
               <span className="fw-bold">Vocação:</span>
               <strong className="text-dark text-uppercase">{char.voc}</strong>
             </div>
-
             <Form onSubmit={handleSubmit(onSubmit)}>
               <Form.Group className="my-3">
                 <Form.Label className="text-dark fw-bold">Evento</Form.Label>
@@ -168,7 +163,9 @@ const NewMeet: React.FC<PropsNewMeet> = ({
                 />
               </Form.Group>
 
-              <Button type="submit">Salvar</Button>
+              <Button type="submit" disabled={watch("event_id") === ""}>
+                Salvar
+              </Button>
             </Form>
           </Card.Body>
         </Card>
