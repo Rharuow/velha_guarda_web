@@ -43,6 +43,9 @@ const Meetings: React.FC<{
     useState<boolean>(false);
   const [meetings, setMeetings] = useState<Array<MeetDatabase>>();
   const [filters, setFilters] = useState<FilterMeetingType>({});
+  const [noContentMessage, setNoContentMessage] = useState<ErrorMessageType>(
+    "There ins't meet today!"
+  );
 
   const filterMeetings = async (
     filter: FilterMeetingType,
@@ -53,20 +56,11 @@ const Meetings: React.FC<{
     let [comingMeetings, getTotalMeetings] = (
       await getMeetings(0, qs.stringify({ filters: { ...filters, ...filter } }))
     ).data.record as [Array<MeetDatabase>, number];
-    if (comingMeetings.length <= 0) {
-      Swal.fire({
-        title: translate()["ops!"],
-        text: translate()[errorMessage],
-        icon: "info",
-      });
-      setTodayChecked(false);
-      setFilters(filters);
-    } else {
-      setMeetings(comingMeetings);
-      setTotalMeetings(getTotalMeetings);
-      setPage(1);
-      setFilters({ ...filters, ...filter });
-    }
+    setNoContentMessage(errorMessage);
+    setMeetings(comingMeetings);
+    setTotalMeetings(getTotalMeetings);
+    setPage(1);
+    setFilters({ ...filters, ...filter });
 
     setLoading(false);
   };
@@ -166,7 +160,7 @@ const Meetings: React.FC<{
                 <i className="far fa-frown text-danger fs-30px" />
                 <div className="w-100  d-flex justify-content-center">
                   <strong className="text-danger">
-                    Sem Encontros no momento
+                    {translate()[noContentMessage]}
                   </strong>
                 </div>
               </div>
@@ -183,9 +177,12 @@ const Meetings: React.FC<{
         <div className="d-flex flex-wrap">
           <Form className="w-100">
             <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Label>
+                <p>Nome do Evento</p>
+              </Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Nome do Evento"
+                placeholder="ex: Oberon"
                 onChange={(e) => {
                   if (
                     e.target.value.length % 2 === 0 &&
@@ -219,11 +216,7 @@ const Meetings: React.FC<{
                       start_at_gteq: DateTime.utc(
                         DateTime.now().year,
                         DateTime.now().month,
-                        DateTime.now().day,
-                        DateTime.now().hour,
-                        DateTime.now().minute,
-                        DateTime.now().second,
-                        DateTime.now().millisecond
+                        DateTime.now().day
                       ).toISO(),
                       start_at_lteq: DateTime.utc(
                         DateTime.now().endOf("day").year,
