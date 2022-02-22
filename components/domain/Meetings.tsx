@@ -12,20 +12,22 @@ import qs from "qs";
 import { translate } from "../../translate";
 import { useRouter } from "next/router";
 import { ModalType } from "../../pages/dashboard";
+import _ from "lodash";
 
 export type FilterMeetingType =
   | {
-      filters: {
-        start_at_gteq: string;
-        start_at_lteq: string;
-        event: { name: string };
-      };
+      start_at_gteq: string;
+      start_at_lteq: string;
+      event: { name: string };
+      available: boolean | null;
     }
   | {};
 
 export type ErrorMessageType =
   | "There ins't meet today!"
-  | "There ins't meet with title!";
+  | "There ins't meet with title!"
+  | "There ins't meet not available!"
+  | "There ins't meet available!";
 
 const Meetings: React.FC<{
   setModal: React.Dispatch<React.SetStateAction<ModalType>>;
@@ -36,6 +38,9 @@ const Meetings: React.FC<{
   const [countMeetings, setTotalMeetings] = useState<number>(0);
   const [page, setPage] = useState<number>(0);
   const [todayChecked, setTodayChecked] = useState<boolean>(false);
+  const [availableChecked, setAvailableChecked] = useState<boolean>(false);
+  const [notAvailableChecked, setNotAvailableChecked] =
+    useState<boolean>(false);
   const [meetings, setMeetings] = useState<Array<MeetDatabase>>();
   const [filters, setFilters] = useState<FilterMeetingType>({});
 
@@ -44,8 +49,9 @@ const Meetings: React.FC<{
     errorMessage: ErrorMessageType = "There ins't meet today!"
   ) => {
     setLoading(true);
+    console.log("on submit = ", { filters: { ...filters, ...filter } });
     let [comingMeetings, getTotalMeetings] = (
-      await getMeetings(0, qs.stringify({ ...filters, ...filter }))
+      await getMeetings(0, qs.stringify({ filters: { ...filters, ...filter } }))
     ).data.record as [Array<MeetDatabase>, number];
     if (comingMeetings.length <= 0) {
       Swal.fire({
@@ -144,8 +150,9 @@ const Meetings: React.FC<{
                       variant="outline-success"
                       className="w-100 fw-bold"
                       onClick={async () => {
-                        const tempMeeting = (await getMeetings(page)).data
-                          .record[0];
+                        const tempMeeting = (
+                          await getMeetings(page, qs.stringify({ filters }))
+                        ).data.record[0];
                         setMeetings([...meetings, ...tempMeeting]);
                       }}
                     >
@@ -186,35 +193,29 @@ const Meetings: React.FC<{
                   )
                     filterMeetings(
                       {
-                        ...filters,
-                        filters: {
-                          event: { name: e.target.value },
-                        },
+                        event: { name: e.target.value },
                       },
                       "There ins't meet with title!"
                     );
                   if (e.target.value.length === 0)
                     filterMeetings({
-                      ...filters,
-                      filters: {
-                        event: { name: "" },
-                      },
+                      event: { name: "" },
                     });
                 }}
               />
             </Form.Group>
           </Form>
-          <ToggleButton
-            id="toggle-check"
-            type="checkbox"
-            variant={todayChecked ? "success" : "danger"}
-            checked={todayChecked}
-            value="1"
-            onChange={() => {
-              setTodayChecked(!todayChecked);
-              !todayChecked
-                ? filterMeetings({
-                    filters: {
+          <div className="d-flex justify-content-around w-100">
+            <ToggleButton
+              id="toggle-check"
+              type="checkbox"
+              variant={todayChecked ? "success" : "danger"}
+              checked={todayChecked}
+              value="1"
+              onChange={() => {
+                setTodayChecked(!todayChecked);
+                !todayChecked
+                  ? filterMeetings({
                       start_at_gteq: DateTime.utc(
                         DateTime.now().year,
                         DateTime.now().month,
@@ -233,13 +234,58 @@ const Meetings: React.FC<{
                         DateTime.now().endOf("day").second,
                         DateTime.now().endOf("day").millisecond
                       ).toISO(),
-                    },
-                  })
-                : filterMeetings({ filters: {} });
-            }}
-          >
-            Hoje
-          </ToggleButton>
+                    })
+                  : filterMeetings({
+                      start_at_gteq: undefined,
+                      start_at_lteq: undefined,
+                    });
+              }}
+            >
+              Hoje
+            </ToggleButton>
+            <ToggleButton
+              id="toggle-available"
+              type="checkbox"
+              variant={availableChecked ? "success" : "danger"}
+              checked={availableChecked}
+              value="1"
+              onChange={() => {
+                setAvailableChecked(!availableChecked);
+                setNotAvailableChecked(false);
+                !availableChecked
+                  ? filterMeetings(
+                      {
+                        available: true,
+                      },
+                      "There ins't meet available!"
+                    )
+                  : filterMeetings({});
+              }}
+            >
+              Abertos
+            </ToggleButton>
+            <ToggleButton
+              id="toggle-not-available"
+              type="checkbox"
+              variant={notAvailableChecked ? "success" : "danger"}
+              checked={notAvailableChecked}
+              value="1"
+              onChange={() => {
+                setNotAvailableChecked(!notAvailableChecked);
+                setAvailableChecked(false);
+                !notAvailableChecked
+                  ? filterMeetings(
+                      {
+                        available: false,
+                      },
+                      "There ins't meet not available!"
+                    )
+                  : filterMeetings({});
+              }}
+            >
+              Fechados
+            </ToggleButton>
+          </div>
         </div>
       </Card.Footer>
     </Card>

@@ -163,7 +163,12 @@ const NewMeet: React.FC<PropsNewMeet> = ({
                 />
               </Form.Group>
 
-              <Button type="submit" disabled={watch("event_id") === ""}>
+              <Button
+                type="submit"
+                disabled={
+                  watch("event_id") === "" || watch("event_id") === undefined
+                }
+              >
                 Salvar
               </Button>
             </Form>

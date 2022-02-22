@@ -25,6 +25,8 @@ export const translate = (language = "pt-BR") => {
         "Meet wasn't load": "Os encontros não foram carregados",
         "There ins't meet today!": "Não há encontros hoje!",
         "There ins't meet with title!": "Não há encontros com esse título!",
+        "There ins't meet available!": "Não há encontros ativos!",
+        "There ins't meet not available!": "Não há encontros intativos!",
         "Your char was add on meet": "Seu Char foi adicionado ao encontro",
         "Your char was deleted on meet": "Seu Char foi retirado do encontro",
         "Meet deleted with success": "Encontro deletado com Sucesso",
