@@ -174,7 +174,7 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
             >
               Abandonar encontro
             </Button>
-          ) : char.id === meet.char_id && meet.available ? (
+          ) : char.id === meet.char_id ? (
             <Button
               className="mt-4"
               size="sm"
@@ -189,15 +189,13 @@ const ShowMeet: React.FC<PropsShowMeet> = ({
             <Alert variant="info" className="mt-3">
               Você ja possui um Char nesse encontro
             </Alert>
-          ) : meet.event.max_chars &&
-            meet.event.max_chars === meet.chars.length ? (
-            <Alert variant="info" className="mt-3">
-              Esse encontro já encheu
-            </Alert>
           ) : (
-            <Alert variant="info" className="mt-3">
-              Esse encontro já passou
-            </Alert>
+            meet.event.max_chars &&
+            meet.event.max_chars === meet.chars.length && (
+              <Alert variant="info" className="mt-3">
+                Esse encontro já encheu
+              </Alert>
+            )
           )}
         </div>
       )}
