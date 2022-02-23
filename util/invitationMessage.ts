@@ -15,11 +15,19 @@ export const meetInvitation = (event: EventDatabase, meet: MeetDatabase) => {
       meet.start_at.toString().split("T")[0].split("-")[1] +
       "/" +
       meet.start_at.toString().split("T")[0].split("-")[0]
-    }*!\r\n Até agora temos *${meet.chars.length}*, chega mais no nosso app (${
+    }*!\r\n Até agora temos *${
+      meet.chars.length
+    }*.\r\n Chega mais no nosso app (${
       process.env.NEXT_PUBLIC_SITE
     }dashboard) pra participar!` +
     `\r\n    Participantes:` +
     partners.join() +
-    "\r\n    ( ) Sua vaga te espera la no app"
+    "\r\n    ( ) Sua vaga te espera la no app" +
+    `\r\n` +
+    `${
+      !meet.location.includes("Sem local")
+        ? `\r\nSe liga no ponto de encontro -->*${meet.location}*<--`
+        : "\r\nVê se não falta hein!"
+    }`
   );
 };
