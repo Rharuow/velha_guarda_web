@@ -8,8 +8,12 @@
 @import "./atomic/bg";
 @import "./atomic/border";
 @import "./atomic/font";
-@import "./global/reset";
+@import "./atomic/position";
 @import "./atomic/size";
+
+@import "./global/reset";
+
+@import "./vendor/react-slick";
 
 @import "~slick-carousel/slick/slick";
 @import "~slick-carousel/slick/slick-theme";

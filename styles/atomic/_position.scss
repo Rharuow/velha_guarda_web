@@ -1,0 +1,27 @@
+@for $i from 0 through 100 {
+  .t-#{$i}px {
+    top: #{$i}px !important;
+  }
+  .b-#{$i}px {
+    bottom: #{$i}px !important;
+  }
+  .l-#{$i}px {
+    left: #{$i}px !important;
+  }
+  .r-#{$i}px {
+    right: #{$i}px !important;
+  }
+
+  .t-#{$i} {
+    top: #{$i}#{"%"} !important;
+  }
+  .b-#{$i} {
+    bottom: #{$i}#{"%"} !important;
+  }
+  .l-#{$i} {
+    left: #{$i}#{"%"} !important;
+  }
+  .r-#{$i} {
+    right: #{$i}#{"%"} !important;
+  }
+}

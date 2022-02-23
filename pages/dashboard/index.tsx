@@ -21,6 +21,7 @@ import Meetings from "../../components/domain/Meetings";
 import Events from "../../components/domain/Events";
 import ShowEvent from "../../components/Modal/ShowEvent";
 import { EventDatabase } from "../../types/database/Event";
+import { Card } from "react-bootstrap";
 
 export type ModalType = {
   newEvent: { isOpen: boolean };
@@ -77,6 +78,8 @@ const Dashboard: React.FC = () => {
     slidesToScroll: 1,
     infinite: false,
     variableWidth: false,
+    dots: true,
+    dotsClass: "slick-dots b-0px t-95",
   };
 
   useEffect(() => {
@@ -161,19 +164,23 @@ const Dashboard: React.FC = () => {
           {/* Encontros */}
           <Meetings setModal={setModal} modal={modal} />
 
-          <div className="mb-4 w-100">
-            <Slider {...settings} className="h-100">
-              {chars?.map((char) => (
-                <div
-                  key={char.name}
-                  className="px-2"
-                  onClick={() => char && char.id && handleCharProfile(char.id)}
-                >
-                  <Char {...char} />
-                </div>
-              ))}
-            </Slider>
-          </div>
+          <Card className="mb-4 w-100">
+            <Card.Body>
+              <Slider {...settings} className="h-100">
+                {chars?.map((char) => (
+                  <div
+                    key={char.name}
+                    className="px-2"
+                    onClick={() =>
+                      char && char.id && handleCharProfile(char.id)
+                    }
+                  >
+                    <Char {...char} />
+                  </div>
+                ))}
+              </Slider>
+            </Card.Body>
+          </Card>
         </>
       ) : (
         <div className="min-h-100vh d-flex justify-content-center align-items-center">
