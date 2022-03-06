@@ -11,7 +11,6 @@ export interface CreateUser extends LoginUser {
   is_admin: boolean;
   is_active: boolean;
   secret: string;
-  chars: Array<CharDatabase>;
 }
 
 export type User = {

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import ReactLoading from "react-loading";
-import { confirmationUser } from "../../services/api";
+import { confirmationUser } from "../services/api";
 
 const Confirmation: React.FC = () => {
   const router = useRouter();

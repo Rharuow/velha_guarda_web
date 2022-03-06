@@ -8,10 +8,10 @@ const Home: NextPage = () => {
         {process.env.NEXT_PUBLIC_APP_NAME}
       </h1>
       <div className="buttons d-flex justify-content-around w-100 align-self-start">
-        <Link href="/session/login">
+        <Link href="/login">
           <a className="btn btn-success min-w-150px w-25">Entrar</a>
         </Link>
-        <Link href="/session/signup">
+        <Link href="/signup">
           <a className="btn btn-danger min-w-150px w-25">Cadastrar</a>
         </Link>
       </div>
