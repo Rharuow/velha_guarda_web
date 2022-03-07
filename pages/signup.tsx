@@ -35,10 +35,6 @@ const Signup: React.FC = () => {
         confirmButtonText: "Confimar",
       });
 
-      //       velha-guarda-web-l4yaxjqbu-haryssonsoares.vercel.app
-      // velha-guarda-web.vercel.app
-      // 127.0.0.1
-
       const dataFormatted: CreateUser = {
         email: data.email,
         is_active: false,
@@ -121,11 +117,13 @@ const Signup: React.FC = () => {
                   {...register("password_confirmation")}
                 />
               </Form.Group>
-              <ReCAPTCHA
-                sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_KEY}`}
-                onChange={() => console.log("foi")}
-              />
-              <div className="d-flex justify-content-around">
+              <div className="d-flex justify-content-center">
+                <ReCAPTCHA
+                  sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_KEY}`}
+                  onChange={() => console.log("foi")}
+                />
+              </div>
+              <div className="d-flex justify-content-around mt-3">
                 <Button type="submit">Salvar</Button>
                 <Link href="/">
                   <a className="btn btn-danger">Voltar</a>
