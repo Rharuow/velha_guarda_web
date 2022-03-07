@@ -21,53 +21,45 @@ export type FormSignupUser = {
 
 const Signup: React.FC = () => {
   const [loading, setLoading] = useState(true);
+  const [isValid, setIsValid] = useState(
+    process.env.NODE_ENV !== "development" ? false : true
+  );
   const { register, handleSubmit } = useForm<FormSignupUser>();
 
   const router = useRouter();
 
   const onSubmit = async (data: FormSignupUser) => {
     setLoading(true);
-    try {
+
+    const dataFormatted: CreateUser = {
+      email: data.email,
+      is_active: false,
+      name: data.name,
+      password: data.password,
+      is_admin: false,
+      secret: `${process.env.NEXT_PUBLIC_SECRET}`,
+    };
+
+    const res = await createUser(dataFormatted);
+
+    if (res.status !== 300) {
+      router.push(`/confirmation?email=${data.email}`);
+
       Swal.fire({
         title: translate()["Greate!"],
         text: translate()["Registrations was successfully"],
         icon: "success",
         confirmButtonText: "Confimar",
       });
-
-      const dataFormatted: CreateUser = {
-        email: data.email,
-        is_active: false,
-        name: data.name,
-        password: data.password,
-        is_admin: false,
-        secret: `${process.env.NEXT_PUBLIC_SECRET}`,
-      };
-
-      const res = await createUser(dataFormatted);
-
-      router.push(`/confirmation?email=${data.email}`);
-
-      setLoading(false);
+    } else {
       Swal.fire({
         title: translate()["ops!"],
         text: translate()["U did make something wrong"],
         icon: "error",
         confirmButtonText: "Ok",
       });
-      setLoading(false);
-    } catch (error) {
-      Swal.fire({
-        title: translate()["ops!"],
-        text: translate()[
-          "There is someting something worng with CIP API. Please try again"
-        ],
-        icon: "info",
-        confirmButtonText: "Ok",
-      }).then(async () => {
-        router.reload();
-      });
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -117,14 +109,18 @@ const Signup: React.FC = () => {
                   {...register("password_confirmation")}
                 />
               </Form.Group>
-              <div className="d-flex justify-content-center">
-                <ReCAPTCHA
-                  sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_KEY}`}
-                  onChange={() => console.log("foi")}
-                />
-              </div>
+              {process.env.NODE_ENV !== "development" && (
+                <div className="d-flex justify-content-center">
+                  <ReCAPTCHA
+                    sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_KEY}`}
+                    onChange={() => setIsValid((state) => !state)}
+                  />
+                </div>
+              )}
               <div className="d-flex justify-content-around mt-3">
-                <Button type="submit">Salvar</Button>
+                <Button type="submit" disabled={!isValid}>
+                  Salvar
+                </Button>
                 <Link href="/">
                   <a className="btn btn-danger">Voltar</a>
                 </Link>
