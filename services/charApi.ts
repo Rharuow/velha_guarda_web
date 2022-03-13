@@ -4,7 +4,10 @@ import { Guild } from "../types/Guild";
 import { setError } from "./api";
 
 const charApi = axios.create({
-  baseURL: "https://api.tibiadata.com/v2",
+  baseURL: "https://api.tibiadata.com/v3",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 export type ErrorAPI = {
@@ -17,9 +20,8 @@ export type ErrorAPI = {
 
 const getChar: (name: string) => Promise<Char> = async (name: string) => {
   try {
-    const char = (await charApi.get(`/characters/${name}.json`)).data
+    const char = (await charApi.get(`/character/${name}`)).data
       .characters as Char;
-    console.log("CHAR BY CIP API = ", char);
     return char;
   } catch (error) {
     throw new Error(`error = ${error}`);

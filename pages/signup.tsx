@@ -31,34 +31,44 @@ const Signup: React.FC = () => {
   const onSubmit = async (data: FormSignupUser) => {
     setLoading(true);
 
-    const dataFormatted: CreateUser = {
-      email: data.email,
-      is_active: false,
-      name: data.name,
-      password: data.password,
-      is_admin: false,
-      secret: `${process.env.NEXT_PUBLIC_SECRET}`,
-    };
+    if (data.password === data.password_confirmation) {
+      const dataFormatted: CreateUser = {
+        email: data.email,
+        is_active: false,
+        name: data.name,
+        password: data.password,
+        is_admin: false,
+        secret: `${process.env.NEXT_PUBLIC_SECRET}`,
+      };
 
-    const res = await createUser(dataFormatted);
+      const res = await createUser(dataFormatted);
 
-    if (res.status !== 300) {
-      router.push(`/confirmation?email=${data.email}`);
+      if (res.status !== 300) {
+        router.push(`/confirmation?email=${data.email}`);
 
-      Swal.fire({
-        title: translate()["Greate!"],
-        text: translate()["Registrations was successfully"],
-        icon: "success",
-        confirmButtonText: "Confimar",
-      });
+        Swal.fire({
+          title: translate()["Greate!"],
+          text: translate()["Registrations was successfully"],
+          icon: "success",
+          confirmButtonText: "Confimar",
+        });
+      } else {
+        Swal.fire({
+          title: translate()["ops!"],
+          text: translate()["U did make something wrong"],
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
+      }
     } else {
       Swal.fire({
         title: translate()["ops!"],
-        text: translate()["U did make something wrong"],
-        icon: "error",
+        text: translate()["Passwords don't match!"],
+        icon: "info",
         confirmButtonText: "Ok",
       });
     }
+
     setLoading(false);
   };
 

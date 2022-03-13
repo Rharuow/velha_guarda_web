@@ -10,13 +10,19 @@ export const translate = (language = "pt-BR") => {
         "U did make something wrong": "Você fez algo de errado!",
         "There is someting bad on CIP sever":
           "Há algo de errado com servidor da CIP!",
+        "CIPSOFT server can't find yout char!":
+          "O servidor da CIPSOFT não encontrou seu char!",
         "There is someting something worng with CIP API. Please try again":
           "Há algo de errado com a API da CIP. Por favor tente novamente",
         "Greate!": "Parabens!",
         "Registrations was successfully": "Cadastro feita com sucesso!",
         "Request failed with status code 401": "Requisição não autorizada!",
+        "Character does not exist.": "Esse char não existe no Tibia!",
+        "Character without token comment!":
+          "Entre na conta e adicione o token no comentário!",
         error: "Algo deu errado, desculpe!",
         "Password or email incorrects": "Senha ou email incorretos",
+        "Passwords don't match!": "Senhas não conferem!",
         "Event was registred": "O evento foi registrado com sucesso",
         "Event was changed": "O evento foi alterado com sucesso",
         "Event was deleted": "O evento foi apagado com sucesso",

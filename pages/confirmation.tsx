@@ -1,17 +1,38 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Card, Form } from "react-bootstrap";
+import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 import ReactLoading from "react-loading";
 import ReCAPTCHA from "react-google-recaptcha";
+import { getChar } from "../services/charApi";
+import { translate } from "../translate";
 
 const Confirmation: React.FC = () => {
   const router = useRouter();
 
   const { email, token } = router.query as { email?: string; token?: string };
 
-  const onSubmit = (data: { name: string }) => {
+  const onSubmit = async (data: { name: string }) => {
     console.log(data);
+    try {
+      const charCipAPI = await getChar(data.name);
+
+      if (token && !charCipAPI.character.comment.includes(token))
+        return Swal.fire({
+          title: translate()["ops!"],
+          text: translate()["Character without token comment!"],
+          icon: "info",
+          confirmButtonText: "Ok",
+        });
+    } catch (error) {
+      Swal.fire({
+        title: translate()["ops!"],
+        text: translate()["CIPSOFT server can't find yout char!"],
+        icon: "info",
+        confirmButtonText: "Ok",
+      });
+    }
   };
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -22,7 +43,7 @@ const Confirmation: React.FC = () => {
   const { register, handleSubmit } = useForm<{ name: string }>();
 
   useEffect(() => {
-    setLoading(false);
+    email !== undefined && token !== undefined && setLoading(false);
   }, [email, token]);
 
   return (
