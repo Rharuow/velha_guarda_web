@@ -83,13 +83,13 @@ const forgotPassword = async (data: { email: string }) => {
 
 const changePassword = async (data: FormChangePassword) => {
   try {
-    return await api.put('/users', data)
+    return await api.put("/users", data);
   } catch (error) {
     console.log("change password user error = ", error);
 
     return setError(`change password user error = ${error}`);
   }
-}
+};
 
 const confirmationUser = async (token: string, email: string) => {
   try {
