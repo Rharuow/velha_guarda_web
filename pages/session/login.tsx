@@ -20,28 +20,17 @@ const Login: React.FC = () => {
 
   const router = useRouter();
 
-  // .then(async (res) => {
-  //     if (res?.error) {
-  //       return Swal.fire({
-  //         title: translate()["ops!"],
-  //         text: translate()["Password or email incorrects"],
-  //         icon: "warning",
-  //       }).then(() => router.reload());
-  //     }
-  //     return router.push("/dashboard");
-  //   });
-
   const onSubmit = async (data: LoginUser) => {
     const res = (await signIn("login", {
       ...data,
       redirect: false,
     })) as
       | {
-          error: string | undefined;
-          status: number;
-          ok: boolean;
-          url: string | null;
-        }
+        error: string | undefined;
+        status: number;
+        ok: boolean;
+        url: string | null;
+      }
       | undefined;
     if (res?.error) {
       return Swal.fire({
@@ -58,11 +47,11 @@ const Login: React.FC = () => {
   });
 
   return (
-    <div className="min-h-100vh d-flex align-items-center justify-content-center flex-wrap">
+    <div className="min-h-100vh d-flex flex-column align-items-center justify-content-center flex-wrap">
       <h1 className="d-block w-100 text-center text-white align-self-end">
         {process.env.NEXT_PUBLIC_APP_NAME}
       </h1>
-      <Card className="align-self-start">
+      <Card>
         <Card.Body>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Form.Group className="my-3">
@@ -90,12 +79,17 @@ const Login: React.FC = () => {
               </Button>
 
               <Link href="/">
-                <a className="btn btn-danger w-30">Voltar</a>
+                <a className="btn btn-danger w-30 ">Voltar</a>
               </Link>
             </div>
           </Form>
         </Card.Body>
       </Card>
+      <div className="align-self-start d-flex justify-content-center w-100">
+        <Link href='/forgot_password'>
+          <a>Esqueceu sua senha?</a>
+        </Link>
+      </div>
     </div>
   );
 };
