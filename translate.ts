@@ -23,6 +23,8 @@ export const translate = (language = "pt-BR") => {
         error: "Algo deu errado, desculpe!",
         "Password or email incorrects": "Senha ou email incorretos",
         "Passwords don't match!": "Senhas não conferem!",
+        "Email incorrects": "Email incorretos",
+        "An email was send to": "Um email foi enviado para",
         "Event was registred": "O evento foi registrado com sucesso",
         "Event was changed": "O evento foi alterado com sucesso",
         "Event was deleted": "O evento foi apagado com sucesso",
@@ -36,6 +38,7 @@ export const translate = (language = "pt-BR") => {
         "Your char was add on meet": "Seu Char foi adicionado ao encontro",
         "Your char was deleted on meet": "Seu Char foi retirado do encontro",
         "Meet deleted with success": "Encontro deletado com Sucesso",
+        "Recovery password": "Recuperação de senha",
       };
   }
 };

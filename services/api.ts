@@ -70,6 +70,26 @@ const createUser = async (data: CreateUser) => {
   }
 };
 
+const forgotPassword = async (data: { email: string }) => {
+  try {
+    return await api.put(`/users/${data.email}`);
+  } catch (error) {
+    console.log("forgot password user error = ", error);
+
+    return setError(`forgot password user error = ${error}`);
+  }
+};
+
+const confirmationUser = async (token: string, email: string) => {
+  try {
+    return await api.get(`/users/confirmation/${email}/${token}`);
+  } catch (error) {
+    console.log("confirmation user error = ", error);
+
+    return setError(`confirmation user error = ${error}`);
+  }
+};
+
 const createSession = async (email: string, password: string) => {
   try {
     return await api.post("/session", { email, password });
@@ -285,6 +305,8 @@ export {
   createMeet,
   createEvent,
   createUser,
+  forgotPassword,
+  confirmationUser,
   createSession,
   insertCharMeet,
 };
