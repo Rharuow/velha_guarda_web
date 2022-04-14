@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { getSession } from "next-auth/react";
+import { FormChangePassword } from "../pages/change_password";
 import { CharUpdateParamsDatabase } from "../types/database/Char";
 import { EventDatabase } from "../types/database/Event";
 import { CreateMeetDatabase } from "../types/database/Meet";
@@ -77,6 +78,16 @@ const forgotPassword = async (data: { email: string }) => {
     console.log("forgot password user error = ", error);
 
     return setError(`forgot password user error = ${error}`);
+  }
+}
+
+const changePassword = async (data: FormChangePassword) => {
+  try {
+    return await api.put('/users', data)
+  } catch (error) {
+    console.log("change password user error = ", error);
+
+    return setError(`change password user error = ${error}`);
   }
 }
 
@@ -306,6 +317,7 @@ export {
   createEvent,
   createUser,
   forgotPassword,
+  changePassword,
   confirmationUser,
   createSession,
   insertCharMeet,
