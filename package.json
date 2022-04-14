@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
+    "@hookform/resolvers": "^2.8.8",
     "@types/axios": "^0.14.0",
     "@zeit/next-sass": "^1.0.1",
     "axios": "^0.24.0",
@@ -30,7 +31,8 @@
     "react-select": "^5.2.2",
     "react-slick": "^0.28.1",
     "slick-carousel": "^1.8.1",
-    "sweetalert2": "^11.3.10"
+    "sweetalert2": "^11.3.10",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.178",
@@ -45,6 +47,7 @@
     "@types/react-select": "^5.0.1",
     "@types/react-slick": "^0.23.8",
     "@types/slick-carousel": "^1.6.37",
+    "@types/yup": "^0.29.13",
     "eslint": "8.6.0",
     "eslint-config-next": "12.0.8",
     "sass": "^1.48.0",

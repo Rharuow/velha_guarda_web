@@ -3,7 +3,7 @@ export const translate = (language = "pt-BR") => {
     default:
       return {
         "Wellcome to ": `Bem vindo ao ${process.env.NEXT_PUBLIC_APP_NAME}`,
-        "This field is required": "Esse Campo é obrigatório",
+        "This field is required": "Esse campo é obrigatório",
         "Choose one": "Escolha 1 (um)",
         "ops!": "Ops!",
         "U tried something really bad": "Você tentou algo muito ruim!",
@@ -31,6 +31,8 @@ export const translate = (language = "pt-BR") => {
         error: "Algo deu errado, desculpe!",
         "Password or email incorrects": "Senha ou email incorretos",
         "Passwords don't match!": "Senhas não conferem!",
+        "Password updated with success": "Senha atualizada com sucesso",
+        "Passwords must match": "Senhas devem combinar",
         "Email incorrects": "Email incorretos",
         "An email was send to": "Um email foi enviado para",
         "Event was registred": "O evento foi registrado com sucesso",
@@ -43,10 +45,14 @@ export const translate = (language = "pt-BR") => {
         "There ins't meet with title!": "Não há encontros com esse título!",
         "There ins't meet available!": "Não há encontros ativos!",
         "There ins't meet not available!": "Não há encontros intativos!",
+        "Try again!": "Tente novamente!",
         "Your char was add on meet": "Seu Char foi adicionado ao encontro",
         "Your char was deleted on meet": "Seu Char foi retirado do encontro",
+        "You'll redirect to login page.":
+          "Você será redirecionado para a página de login.",
         "Meet deleted with success": "Encontro deletado com Sucesso",
         "Recovery password": "Recuperação de senha",
+        "Sorry, something is worng": "Desculpa, algo de errado ocorreu.",
       };
   }
 };
