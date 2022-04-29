@@ -159,7 +159,9 @@ const Dashboard: React.FC = () => {
             <CharDetailed {...char} />
           </div>
           {/* Eventos */}
-          <Events char={char} modal={modal} setModal={setModal} />
+          {currentUser?.is_admin && (
+            <Events char={char} modal={modal} setModal={setModal} />
+          )}
 
           {/* Encontros */}
           <Meetings setModal={setModal} modal={modal} />
