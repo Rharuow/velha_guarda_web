@@ -168,7 +168,7 @@ const Dashboard: React.FC = () => {
 
           <Card className="mb-4 w-100">
             <Card.Body>
-              <Slider {...settings} className="h-100">
+              <Slider {...settings} slidesToShow={1} className="h-100">
                 {chars?.map((char) => (
                   <div
                     key={char.name}

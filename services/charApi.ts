@@ -6,7 +6,7 @@ import { setError } from "./api";
 const charApi = axios.create({
   baseURL: "https://api.tibiadata.com/v3",
   headers: {
-    "Content-Type": "application/json",
+    Accept: "application/json",
   },
 });
 
@@ -24,6 +24,7 @@ const getChar: (name: string) => Promise<Char> = async (name: string) => {
       .characters as Char;
     return char;
   } catch (error) {
+    console.log("CIP api get char = ", error);
     throw new Error(`error = ${error}`);
   }
 };
